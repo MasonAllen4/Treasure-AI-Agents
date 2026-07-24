@@ -1,0 +1,20 @@
+name: Shopper Profiles
+database: cpg_loyalty_db
+tables:
+  - name: shopper_profiles
+    td_query: |
+      SELECT
+        shopper_id,
+        first_name,
+        loyalty_tier,
+        points_balance,
+        points_expiry_date,
+        lifetime_purchase_count,
+        last_purchase_date,
+        preferred_categories,
+        preferred_retailers,
+        opted_in_email,
+        opted_in_sms
+      FROM shopper_profiles
+    enable_data: true
+    enable_data_index: true

@@ -1,0 +1,19 @@
+name: Lead Profiles
+database: automotive_db
+tables:
+  - name: lead_profiles
+    td_query: |
+      SELECT
+        lead_id,
+        first_name,
+        current_vehicle_make,
+        current_vehicle_model,
+        current_vehicle_year,
+        last_service_date,
+        previous_inquiries,
+        expressed_interests,
+        preferred_contact_method,
+        zip_code
+      FROM lead_profiles
+    enable_data: true
+    enable_data_index: true

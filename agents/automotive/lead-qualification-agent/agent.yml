@@ -1,0 +1,46 @@
+name: Lead Qualification Agent
+
+model: claude-4.5-sonnet
+temperature: 1
+reasoning_effort: high
+max_tool_iterations: 10
+
+starter_message: |
+  Hi! I'm here to help you find the right vehicle. Tell me what you're looking for and I'll match you with the best options.
+
+tools:
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Lead Profiles")'
+    target_function: LOOKUP
+    function_name: lookup_lead
+    function_description: Look up a lead's profile including previous vehicles, service history, expressed interests, and contact preferences
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Vehicle Inventory")'
+    target_function: SEARCH
+    function_name: search_inventory
+    function_description: Search current vehicle inventory by make, model, trim, price range, or features
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Sales & Finance FAQ")'
+    target_function: READ_TEXT
+    function_name: get_sales_info
+    function_description: Get information about financing options, trade-in process, test drive booking, and current offers
+
+outputs:
+  - name: lead_qualification
+    function_name: record_lead_qualification
+    function_description: Record the lead's qualification status and recommended next step
+    json_schema: |
+      {
+        "type": "object",
+        "properties": {
+          "qualification_score": {"type": "string", "enum": ["hot", "warm", "cold", "unqualified"]},
+          "purchase_timeline": {"type": "string", "enum": ["immediate", "1_3_months", "3_6_months", "browsing", "unknown"]},
+          "vehicle_interest": {"type": "string"},
+          "financing_interest": {"type": "boolean"},
+          "trade_in_interest": {"type": "boolean"},
+          "recommended_action": {"type": "string"}
+        },
+        "required": ["qualification_score", "purchase_timeline", "vehicle_interest", "recommended_action"]
+      }

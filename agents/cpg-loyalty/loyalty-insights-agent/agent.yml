@@ -1,0 +1,50 @@
+name: Loyalty & Shopper Insights Agent
+
+model: claude-4.5-sonnet
+temperature: 1
+reasoning_effort: medium
+max_tool_iterations: 8
+
+starter_message: |
+  Welcome back! Ask me about your points, rewards, or personalized offers — I'm here to help.
+
+tools:
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Shopper Profiles")'
+    target_function: LOOKUP
+    function_name: lookup_shopper
+    function_description: Look up a shopper's loyalty points, tier, purchase history, and brand preferences
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Rewards Catalog")'
+    target_function: SEARCH
+    function_name: search_rewards
+    function_description: Search available rewards, offers, and redemption options for the shopper's tier
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Brand & Product FAQ")'
+    target_function: READ_TEXT
+    function_name: get_brand_info
+    function_description: Get information about brand products, ingredients, promotions, and sustainability initiatives
+
+  - type: web_search
+    target: '@ref(type: "web_search_tool", name: "web-search")'
+    target_function: SEARCH
+    function_name: search_web
+    function_description: Search the web for current promotions, retailer availability, or brand news
+
+outputs:
+  - name: shopper_engagement
+    function_name: record_engagement
+    function_description: Record what the shopper engaged with and their loyalty intent
+    json_schema: |
+      {
+        "type": "object",
+        "properties": {
+          "intent": {"type": "string", "enum": ["redeem_points", "learn_about_rewards", "product_question", "complaint", "other"]},
+          "points_discussed": {"type": "boolean"},
+          "offer_surfaced": {"type": "boolean"},
+          "brand_sentiment": {"type": "string", "enum": ["positive", "neutral", "negative", "unknown"]}
+        },
+        "required": ["intent", "points_discussed", "offer_surfaced", "brand_sentiment"]
+      }

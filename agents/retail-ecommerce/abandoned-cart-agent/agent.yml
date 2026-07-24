@@ -1,0 +1,44 @@
+name: Abandoned Cart Recovery Agent
+
+model: claude-4.5-sonnet
+temperature: 1
+reasoning_effort: low
+max_tool_iterations: 6
+
+starter_message: |
+  Hi! I see you left something behind. Can I help you complete your order or answer any questions?
+
+tools:
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Customer Profiles")'
+    target_function: LOOKUP
+    function_name: lookup_customer
+    function_description: Look up a customer's profile, purchase history, loyalty tier, and cart contents
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Product Catalog")'
+    target_function: SEARCH
+    function_name: search_products
+    function_description: Search product catalog for details, availability, reviews, and related items
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Promotions FAQ")'
+    target_function: READ_TEXT
+    function_name: check_promotions
+    function_description: Check available promotions, discount eligibility, and return policy
+
+outputs:
+  - name: cart_outcome
+    function_name: record_cart_outcome
+    function_description: Record the result of this cart recovery interaction
+    json_schema: |
+      {
+        "type": "object",
+        "properties": {
+          "outcome": {"type": "string", "enum": ["recovered", "abandoned", "needs_follow_up"]},
+          "barrier": {"type": "string"},
+          "promotion_offered": {"type": "boolean"},
+          "cart_value": {"type": "number"}
+        },
+        "required": ["outcome", "barrier", "promotion_offered"]
+      }

@@ -1,0 +1,44 @@
+name: Subscriber Re-engagement Agent
+
+model: claude-4.5-sonnet
+temperature: 1
+reasoning_effort: medium
+max_tool_iterations: 8
+
+starter_message: |
+  Hi! I'm here to help you get the most out of your subscription.
+  I can look up your account, recommend content, and answer any questions about your plan.
+
+tools:
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Subscriber FAQ")'
+    target_function: READ_TEXT
+    function_name: search_faq
+    function_description: Search subscriber FAQ for account, billing, and content questions
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Subscriber Profiles")'
+    target_function: LOOKUP
+    function_name: lookup_subscriber
+    function_description: Look up a subscriber's profile, plan tier, viewing history, and expiry date
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Content Catalog")'
+    target_function: SEARCH
+    function_name: search_content
+    function_description: Search the content catalog for titles by genre, format, or keyword
+
+outputs:
+  - name: reengagement_outcome
+    function_name: record_outcome
+    function_description: Record the outcome of this re-engagement interaction
+    json_schema: |
+      {
+        "type": "object",
+        "properties": {
+          "intent": {"type": "string", "enum": ["retained", "at_risk", "churned", "unknown"]},
+          "action_taken": {"type": "string"},
+          "recommended_titles": {"type": "array", "items": {"type": "string"}}
+        },
+        "required": ["intent", "action_taken"]
+      }

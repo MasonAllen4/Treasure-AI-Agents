@@ -1,0 +1,19 @@
+name: Content Catalog
+database: media_streaming_db
+tables:
+  - name: content_catalog
+    td_query: |
+      SELECT
+        title_id,
+        title,
+        genre,
+        format,
+        release_year,
+        synopsis,
+        rating,
+        available_in_regions,
+        requires_tier
+      FROM content_catalog
+      WHERE is_available = true
+    enable_data: true
+    enable_data_index: true

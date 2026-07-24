@@ -1,0 +1,16 @@
+name: Product Documentation
+database: b2b_saas_db
+tables:
+  - name: product_docs
+    td_query: |
+      SELECT
+        doc_id,
+        title,
+        feature_area,
+        content_summary,
+        url,
+        last_updated
+      FROM product_documentation
+      WHERE is_published = true
+    enable_data: true
+    enable_data_index: true

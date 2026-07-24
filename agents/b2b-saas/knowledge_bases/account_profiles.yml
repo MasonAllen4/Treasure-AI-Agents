@@ -1,0 +1,23 @@
+name: Account Profiles
+database: b2b_saas_db
+tables:
+  - name: account_profiles
+    td_query: |
+      SELECT
+        account_id,
+        company_name,
+        plan_tier,
+        seat_count,
+        active_seats,
+        health_score,
+        renewal_date,
+        days_until_renewal,
+        last_login_date,
+        features_activated,
+        features_never_used,
+        open_support_tickets,
+        nps_score,
+        csm_owner
+      FROM account_profiles
+    enable_data: true
+    enable_data_index: true

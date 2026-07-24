@@ -1,0 +1,18 @@
+name: Customer Profiles
+database: retail_ecommerce_db
+tables:
+  - name: customer_profiles
+    td_query: |
+      SELECT
+        customer_id,
+        first_name,
+        loyalty_tier,
+        lifetime_order_count,
+        lifetime_order_value,
+        last_order_date,
+        cart_items,
+        cart_value,
+        cart_abandoned_at
+      FROM customer_profiles
+    enable_data: true
+    enable_data_index: true

@@ -1,0 +1,18 @@
+name: Rewards Catalog
+database: cpg_loyalty_db
+tables:
+  - name: rewards
+    td_query: |
+      SELECT
+        reward_id,
+        reward_name,
+        points_required,
+        reward_type,
+        description,
+        eligible_tiers,
+        expiry_date,
+        is_available
+      FROM rewards_catalog
+      WHERE is_available = true
+    enable_data: true
+    enable_data_index: true

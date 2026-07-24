@@ -1,0 +1,45 @@
+name: Churn Risk Intervention Agent
+
+model: claude-4.5-sonnet
+temperature: 1
+reasoning_effort: high
+max_tool_iterations: 10
+
+starter_message: |
+  Hi! I'm your Customer Success assistant. I can help with your account, usage questions, or anything about your plan.
+
+tools:
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Account Profiles")'
+    target_function: LOOKUP
+    function_name: lookup_account
+    function_description: Look up an account's product usage, feature adoption, seat count, renewal date, and health score
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Product Documentation")'
+    target_function: SEARCH
+    function_name: search_docs
+    function_description: Search product documentation, how-to guides, and feature explanations to answer usage questions
+
+  - type: knowledge_base
+    target: '@ref(type: "knowledge_base", name: "Success Playbooks")'
+    target_function: READ_TEXT
+    function_name: get_playbook
+    function_description: Retrieve customer success playbooks for churn risk intervention, expansion, and onboarding
+
+outputs:
+  - name: intervention_outcome
+    function_name: record_intervention
+    function_description: Record the outcome of this churn risk intervention
+    json_schema: |
+      {
+        "type": "object",
+        "properties": {
+          "churn_risk": {"type": "string", "enum": ["critical", "high", "medium", "low", "healthy"]},
+          "root_cause": {"type": "string", "enum": ["low_adoption", "missing_feature", "pricing", "support_issue", "competitor", "internal_change", "unknown"]},
+          "intervention_taken": {"type": "string"},
+          "escalate_to_csm": {"type": "boolean"},
+          "renewal_at_risk": {"type": "boolean"}
+        },
+        "required": ["churn_risk", "root_cause", "intervention_taken", "escalate_to_csm", "renewal_at_risk"]
+      }

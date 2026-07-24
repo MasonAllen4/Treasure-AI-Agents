@@ -1,0 +1,19 @@
+name: Product Catalog
+database: retail_ecommerce_db
+tables:
+  - name: products
+    td_query: |
+      SELECT
+        product_id,
+        name,
+        category,
+        price,
+        stock_status,
+        average_rating,
+        review_count,
+        description,
+        related_product_ids
+      FROM products
+      WHERE is_active = true
+    enable_data: true
+    enable_data_index: true
