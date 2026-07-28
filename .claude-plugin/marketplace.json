@@ -1,0 +1,12 @@
+{
+  "name": "treasure-ai-agent-portfolio",
+  "description": "Treasure AI Foundry agent portfolio — six agent patterns across Media, Retail, CPG, Automotive, B2B SaaS, and multi-agent orchestration",
+  "plugins": [
+    "plugins/media-subscriber-reengagement",
+    "plugins/retail-abandoned-cart",
+    "plugins/cpg-loyalty-insights",
+    "plugins/automotive-lead-qualification",
+    "plugins/b2b-saas-churn-risk",
+    "plugins/cs-orchestrator"
+  ]
+}
