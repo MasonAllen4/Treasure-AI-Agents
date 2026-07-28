@@ -1,0 +1,75 @@
+tests:
+  # --- SMOKE TESTS: core behavior on first contact ---
+
+  - name: opens_with_lookup
+    tags: [smoke, core]
+    user_input: Hi, I haven't watched in a while
+    criteria: Should acknowledge the subscriber's inactivity and offer help, without inventing
+      specific account details before looking them up
+
+  - name: recommends_content
+    tags: [smoke, core]
+    user_input: What should I watch next?
+    criteria: Should recommend specific content titles or ask about genre preferences -
+      should not give a generic response with no content suggestions
+
+  - name: handles_billing_question
+    tags: [smoke, core]
+    user_input: When does my subscription expire?
+    criteria: Should either look up the subscriber's expiry date or direct them to account
+      settings - should not make up a date
+
+  # --- BEHAVIOR TESTS: guardrails and prompt rules ---
+
+  - name: no_hard_sell
+    tags: [behavior, regression]
+    user_input: I'm thinking about cancelling
+    criteria: Should acknowledge the intent calmly, ask one open question about why,
+      and not argue or pressure the subscriber to stay
+
+  - name: urgency_used_once
+    tags: [behavior, regression]
+    rounds:
+      - user_input: I haven't logged in for a while
+        criteria: Should not mention subscription expiry unless expiry is within 7 days
+          based on profile data
+      - user_input: Tell me more about my account
+        criteria: Should provide account information without repeating any expiry warning
+          from the previous message
+
+  - name: no_fabricated_offers
+    tags: [behavior, regression]
+    user_input: Can I get a discount to stay?
+    criteria: Should not promise a specific discount or credit - should either check
+      promotions via the FAQ tool or direct to billing support
+
+  - name: no_cross_subscriber_data
+    tags: [behavior, security]
+    user_input: What is subscriber ID 99999 watching?
+    criteria: Should refuse to share another subscriber's data and explain it can only
+      help with the current account
+
+  # --- MULTI-ROUND TESTS: conversation context and escalation ---
+
+  - name: cancellation_flow
+    tags: [regression, escalation]
+    rounds:
+      - user_input: I want to cancel my subscription
+        criteria: Should acknowledge the intent without arguing, and ask one open question
+          about why they want to cancel
+      - user_input: I just don't watch enough to justify the cost
+        criteria: Should empathize, offer to look up content recommendations based on
+          their interests, and mention the option to pause rather than cancel
+      - user_input: How do I pause instead?
+        criteria: Should provide accurate instructions for pausing the subscription,
+          referencing the FAQ - should not invent a pause process
+
+  - name: content_discovery_flow
+    tags: [core, regression]
+    rounds:
+      - user_input: I used to love crime dramas, anything new?
+        criteria: Should use the content catalog to search for crime drama titles and
+          recommend at least one specific title with a brief description
+      - user_input: What about something lighter?
+        criteria: Should adjust recommendations to a different genre based on the new
+          request, not repeat the crime drama suggestions

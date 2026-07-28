@@ -28,6 +28,12 @@ tools:
     function_name: search_content
     function_description: Search the content catalog for titles by genre, format, or keyword
 
+variables:
+  - name: subscriber_context
+    target_knowledge_base: '@ref(type: "knowledge_base", name: "Subscriber Profiles")'
+    target_function: LOOKUP
+    function_arguments: '{"query": "{{subscriber_id}}"}'
+
 outputs:
   - name: reengagement_outcome
     function_name: record_outcome

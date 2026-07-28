@@ -1,0 +1,44 @@
+name: CS Orchestrator Agent
+
+model: claude-4.5-sonnet
+temperature: 1
+reasoning_effort: high
+max_tool_iterations: 12
+
+starter_message: |
+  Hi! I'm your Customer Success hub. Tell me what's going on and I'll connect you with the right help.
+
+tools:
+  # Specialist agent: handles B2C media subscribers at risk of churn
+  - type: agent
+    target: '@ref(type: "agent", name: "Subscriber Re-engagement Agent")'
+    target_function: CHAT
+    function_name: handle_subscriber
+    function_description: Route to the Subscriber Re-engagement Agent for media streaming
+      customers who are inactive, considering cancellation, or need content recommendations
+    output_mode: RETURN
+
+  # Specialist agent: handles B2B SaaS accounts at risk of churn
+  - type: agent
+    target: '@ref(type: "agent", name: "Churn Risk Intervention Agent")'
+    target_function: CHAT
+    function_name: handle_account
+    function_description: Route to the Churn Risk Intervention Agent for B2B SaaS
+      accounts with low adoption, declining health scores, or upcoming renewals at risk
+    output_mode: RETURN
+
+outputs:
+  - name: routing_decision
+    function_name: record_routing
+    function_description: Record which specialist was engaged and the outcome
+    json_schema: |
+      {
+        "type": "object",
+        "properties": {
+          "specialist_used": {"type": "string", "enum": ["subscriber_reengagement", "churn_risk", "both", "neither"]},
+          "customer_type": {"type": "string", "enum": ["b2c_subscriber", "b2b_account", "unknown"]},
+          "resolution": {"type": "string", "enum": ["resolved", "escalated", "in_progress", "unresolved"]},
+          "handoff_notes": {"type": "string"}
+        },
+        "required": ["specialist_used", "customer_type", "resolution"]
+      }

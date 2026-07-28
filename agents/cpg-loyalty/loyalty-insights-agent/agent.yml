@@ -6,7 +6,7 @@ reasoning_effort: medium
 max_tool_iterations: 8
 
 starter_message: |
-  Welcome back! Ask me about your points, rewards, or personalized offers — I'm here to help.
+  Welcome back! Ask me about your points, rewards, or personalized offers - I'm here to help.
 
 tools:
   - type: knowledge_base

@@ -1,7 +1,3 @@
----
-name: Brand & Product FAQ
----
-
 # Brand & Product FAQ
 
 ## About Our Products

@@ -1,0 +1,72 @@
+tests:
+  # --- SMOKE TESTS ---
+
+  - name: opens_with_account_lookup
+    tags: [smoke, core]
+    user_input: Hi, I have some questions about our account
+    criteria: Should look up the account before responding and reference at least one
+      piece of account-specific context (health score, seat usage, renewal date, or
+      feature adoption) in its reply
+
+  - name: surfaces_unused_features
+    tags: [smoke, core]
+    user_input: We're not getting as much value as we expected from the platform
+    criteria: Should ask a diagnostic question to understand the root cause, or reference
+      specific unused features from the account profile - should not give a generic
+      response
+
+  - name: answers_product_question
+    tags: [smoke, core]
+    user_input: How do we set up automated reporting?
+    criteria: Should search product documentation and return accurate, specific guidance
+      on the reporting feature - should not make up steps
+
+  # --- ESCALATION TESTS ---
+
+  - name: escalates_competitor_mention
+    tags: [escalation, regression]
+    user_input: We're evaluating a competitor right now
+    criteria: Should not argue against the competitor or make unsupported comparisons -
+      should acknowledge the evaluation and set escalate_to_csm to true in the output
+
+  - name: escalates_pricing_question
+    tags: [escalation, regression]
+    user_input: We need to talk about renegotiating our contract
+    criteria: Should acknowledge the request, not make any pricing commitments, and
+      indicate the CSM will be in touch - should not attempt to negotiate
+
+  - name: escalates_critical_risk
+    tags: [escalation, regression]
+    rounds:
+      - user_input: We've had multiple unresolved support tickets for weeks
+        criteria: Should express urgency, apologize for the experience, and immediately
+          flag for CSM escalation - should not ask the customer to wait or resubmit tickets
+      - user_input: We're seriously considering not renewing
+        criteria: Should acknowledge the renewal risk clearly, not minimize it, and
+          confirm a CSM will reach out within 24 hours
+
+  # --- BEHAVIOR TESTS ---
+
+  - name: diagnose_before_prescribe
+    tags: [behavior, core]
+    rounds:
+      - user_input: The team isn't really using the platform
+        criteria: Should ask at least one open diagnostic question before suggesting
+          solutions - should not immediately prescribe features or offer a training call
+      - user_input: I think it's because the onboarding wasn't great
+        criteria: Should acknowledge the onboarding issue specifically and reference
+          the appropriate playbook intervention for a new customer with low adoption
+
+  - name: no_roadmap_speculation
+    tags: [behavior, regression]
+    user_input: When will you add SSO support?
+    criteria: Should not speculate about or commit to a roadmap timeline - should
+      acknowledge the request, log it as a feature gap, and direct to the CSM or
+      product team for an official answer
+
+  - name: consults_playbook_by_risk
+    tags: [behavior, core]
+    user_input: Our health score has dropped significantly and renewal is in 45 days
+    criteria: Should identify this as high or critical churn risk and apply the
+      corresponding playbook intervention - should recommend escalation to CSM and
+      an executive business review, not a generic check-in call

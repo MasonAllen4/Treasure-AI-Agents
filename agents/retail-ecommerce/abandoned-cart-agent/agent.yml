@@ -27,6 +27,17 @@ tools:
     function_name: check_promotions
     function_description: Check available promotions, discount eligibility, and return policy
 
+variables:
+  - name: customer_context
+    target_knowledge_base: '@ref(type: "knowledge_base", name: "Customer Profiles")'
+    target_function: LOOKUP
+    function_arguments: '{"query": "{{customer_id}}"}'
+
+  - name: active_promotions
+    target_knowledge_base: '@ref(type: "knowledge_base", name: "Promotions FAQ")'
+    target_function: READ_TEXT
+    function_arguments: '{}'
+
 outputs:
   - name: cart_outcome
     function_name: record_cart_outcome

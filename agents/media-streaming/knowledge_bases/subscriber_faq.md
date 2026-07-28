@@ -1,8 +1,4 @@
----
-name: Subscriber FAQ
----
-
-# Subscriber FAQ — Media Streaming Platform
+# Subscriber FAQ - Media Streaming Platform
 
 ## Account & Billing
 
@@ -32,7 +28,7 @@ Available on Premium plan only. Tap the download icon on any title. Downloads ar
 
 ## Re-engagement
 
-**I haven't watched in a while — where do I start?**
+**I haven't watched in a while - where do I start?**
 We recommend checking your "Continue Watching" row and the "New for You" section, which is updated based on your viewing history.
 
 **How do content recommendations work?**

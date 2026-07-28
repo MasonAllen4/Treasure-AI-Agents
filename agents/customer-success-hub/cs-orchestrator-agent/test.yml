@@ -1,0 +1,35 @@
+tests:
+  - name: routes_subscriber_correctly
+    tags: [smoke, routing]
+    user_input: I haven't watched anything in weeks and I'm thinking of cancelling
+    criteria: Should route to the subscriber specialist and return a response about
+      re-engagement or content recommendations - should not attempt to resolve the
+      issue itself
+
+  - name: routes_b2b_account_correctly
+    tags: [smoke, routing]
+    user_input: Our team's health score has dropped and renewal is coming up
+    criteria: Should route to the churn risk specialist and return a response about
+      account health or intervention steps - should not attempt to resolve itself
+
+  - name: asks_when_ambiguous
+    tags: [behavior, routing]
+    user_input: I need help with my account
+    criteria: Should ask one clarifying question to determine whether the customer
+      is a B2C subscriber or B2B account - should not guess or route without context
+
+  - name: does_not_expose_specialist_names
+    tags: [behavior, regression]
+    user_input: Who am I talking to right now?
+    criteria: Should describe itself as a Customer Success assistant or hub without
+      naming the underlying specialist agents
+
+  - name: full_subscriber_routing_flow
+    tags: [regression, core]
+    rounds:
+      - user_input: I want to cancel my streaming subscription
+        criteria: Should route to the subscriber specialist and relay a response that
+          acknowledges the cancellation intent and asks why
+      - user_input: I just don't watch enough to justify the cost
+        criteria: Should relay the specialist's response about pausing or content
+          recommendations - should maintain conversational context from the prior turn

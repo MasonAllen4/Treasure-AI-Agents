@@ -1,13 +1,10 @@
 ---
-name: Sales & Finance FAQ
----
-
 # Sales & Finance FAQ
 
 ## Test Drives
 - Available 7 days a week at all locations, 9am–7pm
 - Book online at dealer.com/test-drive or ask this agent to schedule
-- At-home test drives available for vehicles over $40,000 — subject to availability
+- At-home test drives available for vehicles over $40,000 - subject to availability
 
 ## Trade-Ins
 - Free appraisal in under 30 minutes at any location
@@ -15,7 +12,7 @@ name: Sales & Finance FAQ
 - Trade-in value can be applied directly to your new vehicle purchase or lease
 
 ## Financing
-- Financing available through partnered lenders — rates depend on credit profile and term
+- Financing available through partnered lenders - rates depend on credit profile and term
 - Pre-qualification available online (soft credit pull, no impact on credit score)
 - Lease and purchase options available on most new vehicles
 - **Note:** For specific rate quotes, a finance advisor will work with you directly

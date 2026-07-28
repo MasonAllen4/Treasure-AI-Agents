@@ -5,7 +5,7 @@ name: Success Playbooks
 # Customer Success Intervention Playbooks
 
 ## Churn Risk: Critical (Health Score < 30, Renewal < 60 days)
-1. Immediate CSM escalation — do not attempt to resolve autonomously
+1. Immediate CSM escalation - do not attempt to resolve autonomously
 2. Flag open support tickets for urgent resolution
 3. Schedule executive business review within 5 business days
 4. Prepare account summary: usage gaps, feature adoption, support history
@@ -17,7 +17,7 @@ name: Success Playbooks
 4. If renewal is within 90 days: escalate to CSM with diagnosis and recommended offer
 
 ## Churn Risk: Medium (Health Score 50–70)
-1. Review seat utilization — if under 60%, surface team adoption resources
+1. Review seat utilization - if under 60%, surface team adoption resources
 2. Offer a success check-in call with CSM
 3. Share 1 relevant case study or benchmark from similar companies
 4. Log any feature gaps mentioned for product team
