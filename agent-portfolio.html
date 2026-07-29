@@ -8,14 +8,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0a0a14;
-      --surface: #111120;
-      --surface2: #1a1a2e;
-      --border: #222240;
-      --accent: #e50914;
-      --accent2: #ff4d57;
-      --text: #e8e8f0;
-      --muted: #7070a0;
+      --bg: #0e080d;
+      --surface: #160d14;
+      --surface2: #1e1420;
+      --border: #2e1f2c;
+      --accent: #e87fa2;
+      --accent2: #f5adc5;
+      --text: #f0e8ec;
+      --muted: #8a7080;
       --green: #22c55e;
       --blue: #3b82f6;
       --yellow: #f59e0b;
@@ -127,7 +127,7 @@
 
     .hero-tag {
       display: inline-block;
-      background: rgba(229,9,20,0.15);
+      background: rgba(232,127,162,0.15);
       color: var(--accent);
       font-size: 11px;
       font-weight: 700;
@@ -394,7 +394,7 @@
       line-height: 1.6;
     }
 
-    .code-block .kw { color: #e50914; }
+    .code-block .kw { color: #e87fa2; }
     .code-block .str { color: #22c55e; }
     .code-block .cm { color: #555580; }
 
@@ -553,7 +553,7 @@
   <div class="nav-section-label">Overview</div>
   <a href="#overview">Architecture Overview</a>
   <div class="nav-section-label">Agents</div>
-  <a href="#media"><span class="nav-dot" style="background:#e50914"></span>Media Streaming</a>
+  <a href="#media"><span class="nav-dot" style="background:#e87fa2"></span>Media Streaming</a>
   <a href="#retail"><span class="nav-dot" style="background:#3b82f6"></span>Retail Ecommerce</a>
   <a href="#cpg"><span class="nav-dot" style="background:#22c55e"></span>CPG Loyalty</a>
   <a href="#automotive"><span class="nav-dot" style="background:#f59e0b"></span>Automotive</a>
@@ -627,9 +627,9 @@
   <!-- AGENT 1: MEDIA -->
   <section class="agent-section" id="media">
     <div class="agent-header">
-      <div class="agent-icon" style="background: rgba(229,9,20,0.1); font-size: 24px;">TV</div>
+      <div class="agent-icon" style="background: rgba(232,127,162,0.1); font-size: 24px;">TV</div>
       <div class="agent-meta">
-        <div class="agent-vertical" style="color: #e50914">Media Streaming</div>
+        <div class="agent-vertical" style="color: #e87fa2">Media Streaming</div>
         <h2>Subscriber Re-engagement Agent</h2>
         <p>Re-engages at-risk subscribers using personalized content recommendations before they cancel.</p>
         <div class="tag-row">
@@ -643,7 +643,7 @@
 
     <div class="panels">
       <div class="panel">
-        <div class="panel-label"><span class="panel-label-dot" style="background: #e50914"></span>Logic and Context</div>
+        <div class="panel-label"><span class="panel-label-dot" style="background: #e87fa2"></span>Logic and Context</div>
         <p>Media subscribers churn fastest when content consumption drops. The re-engagement window is narrow - once a subscriber mentally cancels, win-back rates drop sharply. The agent is triggered for subscribers whose subscription expires within 14 days and who have had no content plays in 30 or more days.</p>
         <p>The core logic is personalization-first: the agent pre-loads the subscriber's profile via a variables block before the conversation starts, so it already knows their tier, expiry date, and viewing history on the first message. Content recommendations are pulled from a live content catalog KB, matched against genre preferences.</p>
         <p>Urgency is used once and only once. If expiry is within 7 days, the agent acknowledges it clearly - then never repeats it. Repeated urgency signals trigger churn defensiveness.</p>
