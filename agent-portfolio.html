@@ -584,8 +584,8 @@
       </svg>
       <h1 style="margin-bottom:0;">Treasure AI<br><span style="font-size:22px; font-weight:400; color:var(--muted);">Agent Portfolio</span></h1>
     </div>
-    <p>Six production-ready agents built across five Fortune 1000 verticals using Treasure AI Foundry. Each agent demonstrates a distinct architectural pattern - from single-purpose KB lookup to multi-agent orchestration - covering the full range of deployments an AI Deployment Consultant would design and ship with clients.</p>
-    <p style="margin-top: 16px; color: var(--muted); font-size: 14px;">The five verticals were identified with the help of Treasure AI's AI assistant, which pointed to Media/Entertainment, Retail, CPG, Automotive, and B2B SaaS as the most common CDP deployment use cases. Each industry has a well-defined first-party data problem - churn, abandoned revenue, loyalty drop-off, unqualified leads, and account health - where AI activation produces a measurable outcome.</p>
+    <p>Six agents built across five industries using Treasure AI Foundry. Each one was designed around a different architectural pattern - simple KB lookup, variables pre-loading, web search, and full agent-to-agent orchestration - to cover the range of what gets built in real client deployments.</p>
+    <p style="margin-top: 16px; color: var(--muted); font-size: 14px;">I used Treasure AI's AI assistant to research which industries see the most CDP deployments. It surfaced Media/Entertainment, Retail, CPG, Automotive, and B2B SaaS. What those industries share is a specific, measurable data problem - subscriber churn, cart abandonment, loyalty drop-off, lead quality, account health - where activating first-party data actually moves a number.</p>
     <div class="hero-stats">
       <div class="stat"><span class="stat-value">6</span><span class="stat-label">Agents</span></div>
       <div class="stat"><span class="stat-value">5</span><span class="stat-label">Verticals</span></div>
@@ -607,15 +607,15 @@
     <div class="arch-grid">
       <div class="arch-card">
         <h4>agent.yml</h4>
-        <p>The wiring layer. Defines the model, reasoning effort, tool connections, variable pre-loads, and structured output schema. This is what Treasure AI reads at deployment time.</p>
+        <p>The wiring layer. Defines which model runs, the reasoning effort level, how tools connect, any variables to pre-load, and what the output looks like. This is what Treasure AI reads when the agent deploys.</p>
       </div>
       <div class="arch-card">
         <h4>prompt.md</h4>
-        <p>The behavior layer. Defines goals, guardrails, escalation rules, and what the agent must never do. The LLM reads this on every conversation turn to decide how to respond.</p>
+        <p>The behavior layer. Goals, guardrails, escalation rules, hard limits. The LLM reads this on every turn.</p>
       </div>
       <div class="arch-card">
         <h4>Knowledge Bases</h4>
-        <p>The data layer. Table-based KBs run td_query against live Treasure Data databases. Text-based KBs store policies, playbooks, and FAQs the agent can read and cite.</p>
+        <p>The data layer. Table KBs query live Treasure Data via td_query. Text KBs hold policies, playbooks, and FAQs the agent can pull from mid-conversation.</p>
       </div>
     </div>
 
@@ -634,7 +634,7 @@
         <div class="flow-arrow">-&gt;</div>
         <div class="flow-node highlight">Writes output to CDP</div>
       </div>
-      <p style="font-size: 13px; color: var(--muted); margin-top: 12px;">The output schema at the end of every agent closes the loop - structured data from each conversation flows back into Treasure Data to update customer profiles, refine segments, and trigger downstream journeys. This is what makes the system agentic rather than just conversational.</p>
+      <p style="font-size: 13px; color: var(--muted); margin-top: 12px;">The output schema closes the loop. Every conversation writes structured data back into Treasure Data - profiles update, segments refine, journeys trigger downstream. That's what separates this from a chatbot.</p>
     </div>
   </section>
 
@@ -660,9 +660,9 @@
     <div class="panels">
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #e87fa2"></span>Logic and Context</div>
-        <p>Media subscribers churn fastest when content consumption drops. The re-engagement window is narrow - once a subscriber mentally cancels, win-back rates drop sharply. The agent is triggered for subscribers whose subscription expires within 14 days and who have had no content plays in 30 or more days.</p>
-        <p>The core logic is personalization-first: the agent pre-loads the subscriber's profile via a variables block before the conversation starts, so it already knows their tier, expiry date, and viewing history on the first message. Content recommendations are pulled from a live content catalog KB, matched against genre preferences.</p>
-        <p>Urgency is used once and only once. If expiry is within 7 days, the agent acknowledges it clearly - then never repeats it. Repeated urgency signals trigger churn defensiveness.</p>
+        <p>Subscribers churn fastest when they stop watching. The re-engagement window is short - once someone has mentally decided to cancel, win-back rates drop hard. This agent targets subscribers within 14 days of expiry who haven't played anything in 30 or more days.</p>
+        <p>The design decision here was to pre-load the subscriber's profile using the variables block before the conversation opens. By the time the first message arrives, the agent already knows their tier, expiry date, and watch history - no first-turn tool call needed. Recommendations pull from a live content catalog KB matched to genre preferences.</p>
+        <p>Urgency gets used once. If expiry is within 7 days, the agent states it clearly and moves on. Repeating it creates defensiveness and kills the conversation.</p>
       </div>
 
       <div class="panel">
@@ -679,12 +679,12 @@
 
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #22c55e"></span>Business Value</div>
-        <p>Churn costs a media streaming business 5x to 10x more than retention. A re-engagement agent running at scale replaces what would otherwise require a large outbound support team contacting subscribers manually.</p>
+        <p>Keeping a subscriber costs a fraction of winning one back after they've cancelled. At scale, this agent covers ground that would otherwise need a large outbound team working through lists manually.</p>
         <ul>
-          <li>Reduces subscriber churn by intercepting at-risk users before cancellation intent solidifies</li>
-          <li>Increases content plays from dormant subscribers through personalized title surfacing</li>
-          <li>Scales 1:1 personalization across millions of subscribers simultaneously</li>
-          <li>Output data feeds back into CDP segments, improving future journey targeting</li>
+          <li>Catches at-risk subscribers before they've made up their mind to cancel</li>
+          <li>Gets dormant subscribers watching again by surfacing titles they're actually likely to play</li>
+          <li>Delivers personalized outreach across millions of subscribers at the same time</li>
+          <li>Every conversation writes back to the CDP, sharpening future segment targeting</li>
         </ul>
         <div class="metric-row">
           <div class="metric"><div class="metric-val">14%</div><div class="metric-key">Reactivation target</div></div>
@@ -729,9 +729,9 @@
     <div class="panels">
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #3b82f6"></span>Logic and Context</div>
-        <p>Roughly 70% of ecommerce carts are abandoned. The most common mistake in recovery is leading with a discount - which trains customers to abandon carts intentionally to get offers. This agent is designed around barrier diagnosis first.</p>
-        <p>The agent uses two variables to pre-load context: the customer's profile (cart contents, loyalty tier, order history) and the active promotions list. This means it arrives at the conversation already knowing what the customer left behind and what offers are currently valid.</p>
-        <p>Promotions are only surfaced under two conditions: the customer explicitly raises price as the barrier, or the cart value exceeds $150 and the customer is not already a Platinum member. Otherwise, the agent addresses product uncertainty, shipping concerns, or distraction - the more common barriers.</p>
+        <p>About 70% of ecommerce carts get abandoned. The most common recovery mistake is leading with a discount - which trains customers to abandon on purpose to get an offer. This agent leads with barrier diagnosis, not discounts.</p>
+        <p>Two variables pre-load before the conversation starts: the customer's profile - cart contents, loyalty tier, order history - and the active promotions list. The agent arrives already knowing what was left in the cart and what offers are on the table.</p>
+        <p>Promotions only come up under two conditions: the customer brings up price, or the cart is over $150 and they're not already a Platinum member. Everything else - product questions, shipping concerns, getting distracted - gets handled directly without touching the offers.</p>
       </div>
 
       <div class="panel">
@@ -748,12 +748,12 @@
 
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #22c55e"></span>Business Value</div>
-        <p>Cart abandonment represents recoverable revenue that the business already spent to acquire. An agent that diagnoses the actual barrier converts at a higher rate than a generic discount blast, at lower cost to margin.</p>
+        <p>Cart abandonment is recoverable revenue. The customer showed intent - they just didn't finish. An agent that finds the real barrier converts better than a generic discount blast, and doesn't train people to abandon on purpose.</p>
         <ul>
-          <li>Recovers revenue from customers who had genuine intent to purchase</li>
-          <li>Protects margin by reserving discounts for price-sensitive customers only</li>
-          <li>Product uncertainty responses use live inventory data - no hallucinated specs or availability claims</li>
-          <li>Loyalty-tier awareness surfaces member benefits for Gold/Platinum customers without offering discounts they don't need</li>
+          <li>Recovers carts from customers who actually wanted to buy</li>
+          <li>Protects margin by not handing out discounts to customers who weren't asking for one</li>
+          <li>Product question responses pull from live inventory - no guessing on specs or availability</li>
+          <li>Gold and Platinum members get reminded of their benefits, not a discount they don't need</li>
         </ul>
         <div class="metric-row">
           <div class="metric"><div class="metric-val">~70%</div><div class="metric-key">Industry abandonment rate</div></div>
@@ -797,9 +797,9 @@
     <div class="panels">
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #22c55e"></span>Logic and Context</div>
-        <p>CPG loyalty programs fail not because the rewards are bad, but because shoppers do not understand what their points are worth or feel the program is too abstract. The agent's core logic is to make loyalty concrete: "you have 840 points - that is enough for this specific reward."</p>
-        <p>The agent uses three tool types. The shopper profiles KB provides live points balance, tier, and purchase history. The rewards catalog KB surfaces the best available redemption for that shopper's current balance. The brand FAQ handles product and sustainability questions accurately. The web search tool is the differentiator - it extends the agent beyond static KB content to find current retailer availability or brand news in real time.</p>
-        <p>Tier-aware messaging adjusts the entire conversation tone. Bronze shoppers hear about the path to Silver. Silver shoppers hear about exclusive events. Gold shoppers are treated as brand advocates and asked for feedback.</p>
+        <p>CPG loyalty programs underperform not because the rewards are bad, but because shoppers have no idea what their points are worth. The program feels abstract. The agent's core rule is to make it concrete: "you have 840 points - that's enough for this specific reward."</p>
+        <p>There are four tools at play. Shopper profiles KB for live points balance, tier, and purchase history. Rewards catalog KB to surface the best available redemption for the current balance. Brand FAQ for product and sustainability questions. The web search tool is what separates this one from the others - it handles questions about retailer availability or brand news that static KBs can't answer.</p>
+        <p>The tone shifts based on tier. Bronze shoppers hear what it takes to reach Silver. Silver shoppers get told about events and exclusive access. Gold shoppers get treated like brand advocates and asked what they think.</p>
       </div>
 
       <div class="panel">
@@ -817,12 +817,12 @@
 
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #22c55e"></span>Business Value</div>
-        <p>CPG brands invest heavily in loyalty programs that underperform because engagement is low. An agent that makes loyalty feel real and personalized increases redemption rates and repeat purchase frequency.</p>
+        <p>Most CPG loyalty programs underperform because members aren't actually engaged. When shoppers understand what their points are worth, redemption rates go up and they buy more often.</p>
         <ul>
-          <li>Increases points redemption rate - the clearest sign of an engaged loyalty member</li>
+          <li>Increases points redemption - the clearest sign of an engaged loyalty member</li>
           <li>Drives repeat purchase by surfacing rewards tied to upcoming purchase occasions</li>
-          <li>Gold-tier shopper engagement generates brand advocacy and product feedback at scale</li>
-          <li>Brand sentiment output feeds into CDP for segment refinement and campaign targeting</li>
+          <li>Gold-tier shoppers generate brand feedback and advocacy at scale</li>
+          <li>Brand sentiment output feeds CDP for segment refinement and campaign targeting</li>
         </ul>
         <div class="metric-row">
           <div class="metric"><div class="metric-val">3</div><div class="metric-key">Loyalty tiers</div></div>
@@ -866,9 +866,9 @@
     <div class="panels">
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #f59e0b"></span>Logic and Context</div>
-        <p>Automotive dealerships lose high-value leads because qualification happens inconsistently - some buyers get routed to a sales advisor immediately, others go cold in a generic nurture flow. The agent creates a consistent, structured qualification process across every inbound interaction.</p>
-        <p>This agent uses reasoning_effort: high because qualification decisions have direct downstream consequences. A misclassified hot lead that goes into a cold nurture journey represents thousands of dollars in lost revenue. The higher reasoning effort means the agent considers more signals before scoring a lead.</p>
-        <p>The agent leads with understanding, not pitching. It asks about the buyer's use case before suggesting models, checks lead history to recognize returning customers, and only surfaces specific inventory after understanding the stated need. Financing rates are never quoted - that always routes to the finance team.</p>
+        <p>Dealerships lose leads because qualification is inconsistent. One buyer gets an advisor on the phone in minutes, another lands in a generic email nurture and goes cold. This agent makes that process consistent on every inbound interaction.</p>
+        <p>reasoning_effort is set to high here. A hot lead that gets scored cold and dropped into a nurture sequence represents real lost revenue. The higher setting means the agent considers more signals before calling it.</p>
+        <p>The agent asks before it sells. Use case first, then inventory. Lead history gets checked so returning customers are recognized. Financing rates are never quoted - that's a hard guardrail that routes straight to the finance team.</p>
       </div>
 
       <div class="panel">
@@ -886,12 +886,12 @@
 
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #22c55e"></span>Business Value</div>
-        <p>A hot lead that waits 24 hours for a human callback converts at a fraction of the rate of one contacted within 5 minutes. An agent that qualifies and routes in real time closes the gap between lead capture and sales engagement.</p>
+        <p>A hot lead contacted within 5 minutes converts at a much higher rate than one that waits 24 hours for a callback. An agent that qualifies and routes in real time closes the gap between lead capture and actual sales engagement.</p>
         <ul>
-          <li>Increases sales conversion by routing hot leads to advisors in real time</li>
-          <li>Reduces wasted sales team time on cold or unqualified leads</li>
-          <li>Returning customer recognition builds trust and shortens the qualification conversation</li>
-          <li>Structured output integrates directly with CRM and journey orchestration workflows</li>
+          <li>Hot leads get to an advisor immediately instead of sitting in a queue</li>
+          <li>Sales team time goes to leads that are actually ready to buy</li>
+          <li>Returning customers get recognized, which shortens the conversation and builds trust</li>
+          <li>Structured output plugs directly into CRM and journey orchestration</li>
         </ul>
         <div class="metric-row">
           <div class="metric"><div class="metric-val">4</div><div class="metric-key">Qualification tiers</div></div>
@@ -936,9 +936,9 @@
     <div class="panels">
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #a855f7"></span>Logic and Context</div>
-        <p>B2B SaaS churn is expensive and often preventable if caught early. The problem is that Customer Success Managers cannot monitor every account in real time - at-risk signals appear in the data weeks before a renewal conversation, but no one sees them in time.</p>
-        <p>The agent solves this by operating at scale across all accounts continuously. It uses reasoning_effort: high because root cause diagnosis requires genuine inference - the reason an account has low adoption is often not the obvious one. Internal change, missing features, poor onboarding, and pricing pressure all present with similar usage patterns but require completely different interventions.</p>
-        <p>The Success Playbooks KB is the architectural differentiator. Rather than encoding intervention logic in the prompt, it lives in a separate text KB the agent consults at runtime. This makes the playbooks updatable without redeploying the agent - a critical requirement for a living CS practice.</p>
+        <p>B2B SaaS churn is expensive and most of it is preventable if you catch it early enough. The problem is that CSMs can't watch every account. At-risk signals show up in the data weeks before a renewal conversation - they just go unnoticed.</p>
+        <p>The agent runs across all accounts continuously, which is the scale advantage. reasoning_effort is set to high because diagnosing root cause actually requires inference. Low adoption could mean internal change at the customer, a missing feature, poor onboarding, or pricing pressure - same usage pattern, completely different intervention.</p>
+        <p>The Success Playbooks KB is the design decision I'm most proud of here. Instead of hardcoding intervention logic in the prompt, it lives in a separate text KB the agent reads at runtime. That means the playbooks can be updated without touching the deployment - essential for a CS practice that needs to iterate.</p>
       </div>
 
       <div class="panel">
@@ -956,12 +956,12 @@
 
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #22c55e"></span>Business Value</div>
-        <p>In B2B SaaS, annual recurring revenue is the primary business metric and churn directly erodes it. An agent that intercepts at-risk accounts before the renewal conversation preserves revenue that would otherwise require expensive win-back campaigns or be lost entirely.</p>
+        <p>In B2B SaaS, churn directly erodes ARR and win-back is expensive. An agent that gets in front of at-risk accounts before the renewal conversation preserves revenue that would otherwise require a campaign to recover - or just be gone.</p>
         <ul>
-          <li>Scales CS coverage without scaling headcount - agent monitors every account in real time</li>
-          <li>Root cause classification enables precise interventions rather than generic check-ins</li>
-          <li>Escalation flags ensure human CSMs focus on the accounts that genuinely need them</li>
-          <li>Output feeds CDP segments for renewal risk dashboards and proactive outreach journeys</li>
+          <li>Covers every account continuously without adding headcount</li>
+          <li>Root cause classification means the intervention actually fits the problem</li>
+          <li>Escalation flags keep CSMs focused on the accounts that genuinely need them</li>
+          <li>Output feeds CDP segments for renewal risk dashboards and proactive outreach</li>
         </ul>
         <div class="metric-row">
           <div class="metric"><div class="metric-val">6</div><div class="metric-key">Root cause types</div></div>
@@ -1006,9 +1006,9 @@
     <div class="panels">
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #06b6d4"></span>Logic and Context</div>
-        <p>This agent uses a fundamentally different architecture from the other five. Instead of knowledge bases as tools, it wires two specialist agents as tools - the Subscriber Re-engagement Agent and the Churn Risk Intervention Agent. This is the agent-to-agent pattern.</p>
-        <p>The orchestrator's job is to triage and delegate, not to resolve. When a message arrives, it reads the prompt's routing rules to determine whether the customer is a B2C media subscriber or a B2B SaaS account. It then calls the appropriate specialist with the full customer message as context and relays the response. The customer sees one seamless conversation.</p>
-        <p>output_mode: RETURN on both specialist tools means their responses come back to the orchestrator before delivery, allowing synthesis. If output_mode were SHOW, the specialist's response would stream directly to the customer - useful in some cases, but not here where the orchestrator needs to control the handoff.</p>
+        <p>This one is built differently. Instead of knowledge bases as tools, two specialist agents are wired as tools - the Subscriber Re-engagement Agent and the Churn Risk Intervention Agent. That's the agent-to-agent pattern.</p>
+        <p>The orchestrator's job is to route, not resolve. A message comes in, it reads the routing rules, decides whether this is a B2C subscriber or a B2B account, calls the right specialist, and relays the response. The customer sees one conversation.</p>
+        <p>output_mode: RETURN on both tools means responses come back to the orchestrator before the customer sees them. The alternative, SHOW, would stream the specialist's response directly to the customer. That's useful in some cases - but here the orchestrator needs to control what goes out.</p>
       </div>
 
       <div class="panel">
@@ -1060,12 +1060,12 @@
 
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background: #22c55e"></span>Business Value</div>
-        <p>Large enterprises often have multiple customer types - individual consumers and business accounts - contacting the same support entry point. Without routing, both get generic responses or reach the wrong specialist. The orchestrator eliminates that friction.</p>
+        <p>Large accounts often have both consumers and business customers hitting the same support channel. Without routing, they get a generic response or get bounced to the wrong team. The orchestrator puts the right specialist in front of the right customer every time.</p>
         <ul>
-          <li>Unifies multiple agent capabilities behind one customer-facing interface</li>
-          <li>Reduces wrong-team escalations and misrouted support contacts</li>
-          <li>Scales to additional specialist agents without changing the customer experience</li>
-          <li>Routing decision output feeds CDP for customer type classification and journey assignment</li>
+          <li>One entry point, multiple specialists behind it</li>
+          <li>Fewer contacts bounced to the wrong team</li>
+          <li>Adding a new specialist doesn't change anything from the customer's side</li>
+          <li>The routing decision feeds the CDP for customer type classification and journey assignment</li>
         </ul>
       </div>
 
