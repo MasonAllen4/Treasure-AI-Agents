@@ -567,6 +567,8 @@
   <a href="#automotive"><span class="nav-dot" style="background:#f59e0b"></span>Automotive</a>
   <a href="#b2b"><span class="nav-dot" style="background:#a855f7"></span>B2B SaaS</a>
   <a href="#orchestrator"><span class="nav-dot" style="background:#06b6d4"></span>CS Orchestrator</a>
+  <div class="nav-section-label">Production</div>
+  <a href="#production"><span class="nav-dot" style="background:#a855f7"></span>B2B: Prod Readiness</a>
 </nav>
 
 <!-- MAIN CONTENT -->
@@ -1078,6 +1080,161 @@
           <tr><td>Resolution rate by specialist</td><td>output: resolution field per specialist</td><td>Low resolution on one specialist signals that agent needs prompt or KB improvement</td></tr>
           <tr><td>Handoff note completeness</td><td>output: handoff_notes</td><td>Rich handoff notes reduce CSM ramp time on escalated cases</td></tr>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- PRODUCTION READINESS -->
+  <section class="agent-section" id="production">
+    <div class="agent-header">
+      <div class="agent-icon" style="background: rgba(168,85,247,0.1); font-size: 24px;">PR</div>
+      <div class="agent-meta">
+        <div class="agent-vertical" style="color: #a855f7">Production Deep Dive</div>
+        <h2>B2B Churn Risk Agent: Prototype to Production</h2>
+        <p>What it takes to move from a working design to something you can actually ship, monitor, and prove ROI on.</p>
+      </div>
+    </div>
+
+    <!-- DATA MODEL -->
+    <div class="panels">
+      <div class="panel full-width">
+        <div class="panel-label"><span class="panel-label-dot" style="background: #a855f7"></span>Data Model</div>
+        <p>The agent's three knowledge bases map directly to underlying Treasure Data tables. Here's what those tables look like and why each field matters.</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px;">
+          <div>
+            <p style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px;">account_profiles</p>
+            <div class="code-block">
+<span class="kw">account_id</span>        STRING<br>
+<span class="kw">account_name</span>      STRING<br>
+<span class="kw">csm_owner</span>         STRING<br>
+<span class="kw">health_score</span>       INTEGER <span class="cm">-- 0-100</span><br>
+<span class="kw">seat_utilization</span>   FLOAT   <span class="cm">-- 0.0-1.0</span><br>
+<span class="kw">feature_adoption</span>   ARRAY   <span class="cm">-- active features</span><br>
+<span class="kw">open_tickets</span>       INTEGER<br>
+<span class="kw">nps_score</span>          INTEGER <span class="cm">-- -100 to 100</span><br>
+<span class="kw">renewal_date</span>       DATE<br>
+<span class="kw">arr</span>                FLOAT<br>
+<span class="kw">risk_tier</span>          STRING  <span class="cm">-- high/med/low</span><br>
+<span class="kw">last_login</span>         TIMESTAMP<br>
+<span class="kw">consent_b2b</span>        BOOLEAN <span class="cm">-- DPA signed</span>
+            </div>
+          </div>
+          <div>
+            <p style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px;">product_usage</p>
+            <div class="code-block">
+<span class="kw">account_id</span>         STRING<br>
+<span class="kw">feature_name</span>       STRING<br>
+<span class="kw">usage_count_30d</span>    INTEGER<br>
+<span class="kw">usage_count_90d</span>    INTEGER<br>
+<span class="kw">last_used</span>          TIMESTAMP<br>
+<span class="kw">active_seats</span>       INTEGER<br>
+<span class="kw">licensed_seats</span>     INTEGER<br>
+<span class="kw">integration_status</span> STRING  <span class="cm">-- active/broken/none</span><br>
+<span class="kw">api_errors_7d</span>      INTEGER<br>
+<span class="kw">support_tickets_90d</span> INTEGER
+            </div>
+          </div>
+          <div>
+            <p style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 8px;">agent_output (written back)</p>
+            <div class="code-block">
+<span class="kw">account_id</span>         STRING<br>
+<span class="kw">conversation_id</span>    STRING<br>
+<span class="kw">timestamp</span>          TIMESTAMP<br>
+<span class="kw">churn_risk</span>         STRING<br>
+<span class="kw">root_cause</span>         STRING<br>
+<span class="kw">intervention_taken</span> STRING<br>
+<span class="kw">escalate_to_csm</span>    BOOLEAN<br>
+<span class="kw">renewal_at_risk</span>    BOOLEAN<br>
+<span class="kw">confidence_score</span>   FLOAT<br>
+<span class="kw">agent_version</span>      STRING  <span class="cm">-- for regression tracking</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: var(--muted); margin-top: 14px;">The account_id is the identity spine. Every table joins on it. The agent_output table is what gets written at the end of each conversation - this is the feedback loop that populates CDP segments and renewal risk dashboards.</p>
+      </div>
+
+      <!-- IDENTITY AND CONSENT -->
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background: #a855f7"></span>Identity and Consent</div>
+        <p>B2B identity is simpler than B2C because you're dealing with account-level records rather than individual consumer profiles. But consent still matters - especially in EMEA where GDPR applies to employee data.</p>
+        <ol class="step-list">
+          <li>Account identity is resolved via account_id, passed as a variable at conversation start. No fuzzy matching needed - the CRM is authoritative.</li>
+          <li>The consent_b2b field in account_profiles flags whether a Data Processing Agreement is signed. If false, the agent limits itself to generic product guidance - no account-specific data surfaces.</li>
+          <li>Individual user identity (the CSM or account contact) is handled at the platform level - Treasure AI authenticates the session before the agent runs. The agent itself never processes individual PII.</li>
+          <li>All conversation data written to agent_output is tagged with account_id only, not user email or name. Compliant with GDPR Article 25 data minimisation.</li>
+          <li>Retention policy on agent_output: 24 months, aligned with standard B2B contract cycles. After that, records are anonymised rather than deleted so trend data is preserved.</li>
+        </ol>
+      </div>
+
+      <!-- TESTING STRATEGY -->
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background: #a855f7"></span>Testing Strategy</div>
+        <p>test.yml handles unit-level agent behavior. Production readiness requires three more layers.</p>
+        <ol class="step-list">
+          <li><strong style="color: var(--text)">Unit tests (test.yml)</strong> - smoke, behavior, escalation, and regression cases. Already in place. Covers expected inputs and guardrail enforcement.</li>
+          <li><strong style="color: var(--text)">Shadow mode</strong> - deploy agent alongside human CSMs for 2 weeks. Agent processes the same accounts but output is logged, not acted on. Compare agent churn_risk scores against CSM assessments. Target: agreement rate above 80%.</li>
+          <li><strong style="color: var(--text)">Staged rollout</strong> - start with 10% of the account base, bias toward medium-risk accounts where errors are recoverable. Monitor escalation rate and CSM override rate for the first 30 days before expanding.</li>
+          <li><strong style="color: var(--text)">Adversarial testing</strong> - run accounts with deliberately noisy data (missing fields, conflicting signals) to verify graceful degradation. Agent should default to escalate_to_csm = true when confidence is low, not guess.</li>
+          <li><strong style="color: var(--text)">Regression on agent updates</strong> - any change to prompt.md or success_playbooks.md triggers a full test.yml run plus a comparison against the last 30 days of live output. Flag any shift in root_cause distribution of more than 15%.</li>
+        </ol>
+      </div>
+
+      <!-- MONITORING -->
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background: #a855f7"></span>Monitoring</div>
+        <p>What to watch after go-live, and what triggers action.</p>
+        <table class="opt-table">
+          <tr><th>Signal</th><th>Source</th><th>Alert threshold</th></tr>
+          <tr><td>Escalation rate</td><td>agent_output: escalate_to_csm</td><td>Alert if above 40% - suggests prompt or KB is under-confident</td></tr>
+          <tr><td>Root cause distribution shift</td><td>agent_output: root_cause over time</td><td>Alert if any single cause exceeds 50% - possible data quality issue</td></tr>
+          <tr><td>KB query failure rate</td><td>Tool call logs</td><td>Alert if above 2% - upstream data pipeline issue</td></tr>
+          <tr><td>Output write failure rate</td><td>agent_output ingestion logs</td><td>Alert immediately - broken feedback loop means CDP segments stale</td></tr>
+          <tr><td>Renewal at risk rate</td><td>agent_output: renewal_at_risk = true</td><td>Weekly report to CS leadership - input to pipeline risk review</td></tr>
+          <tr><td>CSM override rate</td><td>CRM: CSM changes agent recommendation</td><td>Alert if above 20% - agent scoring is misaligned with CSM judgment</td></tr>
+        </table>
+      </div>
+
+      <!-- FAILURE HANDLING -->
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background: #a855f7"></span>Failure Handling</div>
+        <p>Three categories of failure, each with a defined response.</p>
+        <ol class="step-list">
+          <li><strong style="color: var(--text)">KB returns no data</strong> - account_id not found or data pipeline delayed. Agent responds with generic product guidance and sets escalate_to_csm = true with root_cause = data_unavailable. Does not fabricate account context.</li>
+          <li><strong style="color: var(--text)">Ambiguous root cause</strong> - multiple signals point in different directions. Agent surfaces what it found, states confidence is low, and escalates rather than forcing a classification. This is preferable to a confident wrong answer.</li>
+          <li><strong style="color: var(--text)">Out-of-scope input</strong> - billing disputes, legal requests, executive escalations. Agent recognises these via prompt guardrails and routes to the appropriate team immediately. No attempt to handle outside its remit.</li>
+          <li><strong style="color: var(--text)">Agent service failure</strong> - platform-level outage. Fallback is a static response acknowledging the issue and providing CSM contact details. Output write is queued and retried rather than dropped.</li>
+          <li><strong style="color: var(--text)">Playbook gap</strong> - account situation does not match any playbook pattern. Agent defaults to escalate_to_csm = true and logs the root_cause as needs_review. This becomes input to the next playbook update cycle.</li>
+        </ol>
+      </div>
+
+      <!-- BUSINESS IMPACT -->
+      <div class="panel full-width">
+        <div class="panel-label"><span class="panel-label-dot" style="background: #a855f7"></span>Proving Business Impact</div>
+        <p>The agent needs a baseline to measure against. Without one, any improvement in renewal rates could be seasonal, market-driven, or unrelated to the agent entirely.</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px;">
+          <div>
+            <p style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Control Group Setup</p>
+            <ol class="step-list">
+              <li>At rollout, randomly assign 20% of eligible accounts to a holdout group. These accounts get standard CSM coverage, no agent intervention.</li>
+              <li>Match holdout accounts to treatment accounts on health score, ARR, and renewal date to reduce selection bias.</li>
+              <li>Run the split for a full renewal cycle - ideally 90 days minimum - before drawing conclusions.</li>
+              <li>Primary metric: renewal rate. Secondary: time-to-escalation for high-risk accounts, CSM hours per account, NPS at renewal.</li>
+            </ol>
+          </div>
+          <div>
+            <p style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 10px;">What Success Looks Like</p>
+            <table class="opt-table">
+              <tr><th>Metric</th><th>Target lift</th></tr>
+              <tr><td>Renewal rate (treatment vs control)</td><td>+5 percentage points</td></tr>
+              <tr><td>High-risk account escalation speed</td><td>-3 days average time to CSM</td></tr>
+              <tr><td>CSM hours per at-risk account</td><td>-20% via better pre-briefing</td></tr>
+              <tr><td>ARR preserved vs prior period</td><td>Positive vs baseline churn rate</td></tr>
+            </table>
+            <p style="font-size: 12px; color: var(--muted); margin-top: 12px;">If the holdout group renews at the same rate as the treatment group, the agent is not adding value and the playbooks need rethinking. That result is just as useful - it points to where the intervention logic is wrong.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
