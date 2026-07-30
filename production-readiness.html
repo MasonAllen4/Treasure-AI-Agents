@@ -420,7 +420,7 @@
       </svg>
       <h1 style="margin-bottom:0;">B2B Churn Risk Agent<br><span style="font-size:20px; font-weight:400; color:var(--muted);">Prototype to Production</span></h1>
     </div>
-    <p>The agent design covers what the agent does and why. This document covers what it takes to actually ship it - the data model underneath, how identity and consent are handled, the testing layers beyond unit tests, what to monitor after go-live, how failures are handled, and how to prove it moved a number.</p>
+    <p>The portfolio covers what each agent does and why it's built that way. This page goes one level deeper on the B2B Churn Risk agent - what the data underneath actually looks like, how identity and consent get handled, what testing beyond unit tests looks like, what to watch after go-live, what happens when things break, and how you'd actually prove it worked.</p>
   </section>
 
   <!-- DATA MODEL -->
@@ -430,7 +430,7 @@
       <div class="section-icon">DB</div>
       <div class="section-meta">
         <h2>Data Model</h2>
-        <p>The three knowledge bases map to underlying Treasure Data tables. Here's what those tables look like and why each field is there.</p>
+        <p>The three knowledge bases each map to a table in Treasure Data. Here's what those tables actually look like and why each field is in there.</p>
       </div>
     </div>
 
@@ -486,7 +486,7 @@
     </div>
 
     <div class="callout">
-      <strong>account_id is the identity spine.</strong> Every table joins on it. The agent_output table is what gets written at the end of each conversation - this is the feedback loop that populates CDP segments, renewal risk dashboards, and CSM pre-briefing workflows. The agent_version field matters for regression: if a prompt update shifts output distributions, you can isolate when it happened.
+      <strong>account_id is the join key across every table.</strong> The agent_output table is what gets written at the end of each conversation - that's the feedback loop. It populates CDP segments, renewal risk dashboards, and gives CSMs context before they pick up the phone. The agent_version field is there for a specific reason: if a prompt update quietly changes how the agent scores accounts, you need to know exactly which version was running and when.
     </div>
   </section>
 
@@ -497,7 +497,7 @@
       <div class="section-icon">ID</div>
       <div class="section-meta">
         <h2>Identity and Consent</h2>
-        <p>B2B identity is simpler than B2C - you're working with account-level records, not individual consumer profiles. But consent still matters.</p>
+        <p>B2B is simpler than B2C here - you're dealing with account-level records, not individual consumer profiles. But consent still matters, especially in EMEA.</p>
       </div>
     </div>
 
@@ -505,18 +505,18 @@
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Identity Resolution</div>
         <ol class="step-list">
-          <li>Account identity is resolved via account_id, passed as a variable at conversation start. No fuzzy matching needed - the CRM is the authoritative source.</li>
-          <li>Individual user identity (the CSM or account contact initiating the session) is handled at the platform level. Treasure AI authenticates the session before the agent runs. The agent never processes individual PII directly.</li>
-          <li>Returning account recognition uses prior conversation history from agent_output, not personal identifiers. The agent sees account context, not who is typing.</li>
+          <li>The account gets identified by its account_id, passed in as a variable before the conversation starts. The CRM is the source of truth - no fuzzy matching needed.</li>
+          <li>Who is actually typing - the CSM or account contact - gets handled at the platform level. Treasure AI authenticates the session before the agent runs. The agent itself never touches individual PII.</li>
+          <li>When the agent looks up prior history, it pulls from agent_output using account_id, not personal identifiers. It sees account context, not who's on the other end.</li>
         </ol>
       </div>
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Consent Handling</div>
         <ol class="step-list">
-          <li>The consent_b2b field in account_profiles flags whether a Data Processing Agreement is signed. If false, the agent limits itself to generic product guidance - no account-specific data is surfaced.</li>
-          <li>All data written to agent_output is tagged with account_id only, not user email or name. Compliant with GDPR Article 25 data minimisation.</li>
-          <li>In EMEA, employee data (usage patterns, login behavior) falls under GDPR. The DPA covers this at contract level. No additional per-user consent flow is needed for B2B account health use cases.</li>
-          <li>Retention policy on agent_output: 24 months, aligned with standard B2B contract cycles. After that, records are anonymised rather than deleted so trend data is preserved.</li>
+          <li>There's a consent_b2b field in account_profiles that flags whether a Data Processing Agreement is signed. If it's false, the agent sticks to generic product guidance - no account-specific data gets surfaced.</li>
+          <li>Everything written to agent_output is tagged with account_id only. No email addresses, no names. That keeps it compliant with GDPR Article 25 on data minimisation.</li>
+          <li>In EMEA, employee usage data falls under GDPR. The DPA at contract level covers this - no separate per-user consent flow is needed for account health use cases.</li>
+          <li>agent_output records are kept for 24 months, which lines up with standard B2B contract cycles. After that they're anonymised rather than deleted, so the trend data stays intact.</li>
         </ol>
       </div>
     </div>
@@ -529,7 +529,7 @@
       <div class="section-icon">TS</div>
       <div class="section-meta">
         <h2>Testing Strategy</h2>
-        <p>test.yml handles unit-level behavior. Getting to production requires three more layers on top of that.</p>
+        <p>test.yml covers the unit-level stuff. Actually getting to production takes a few more steps on top of that.</p>
       </div>
     </div>
 
@@ -537,11 +537,11 @@
       <div class="panel full-width">
         <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Four Testing Layers</div>
         <ol class="step-list">
-          <li><strong style="color: var(--text)">Unit tests (test.yml)</strong> - smoke, behavior, escalation, and regression cases. Covers expected inputs, guardrail enforcement, and edge cases like missing KB data or ambiguous signals. Already in place. Runs on every push via tdx agent test.</li>
-          <li><strong style="color: var(--text)">Shadow mode (2 weeks pre-launch)</strong> - deploy the agent alongside human CSMs for two weeks. It processes the same accounts but output is logged only, not acted on. Compare agent churn_risk scores against CSM assessments. Target: agreement rate above 80% before going live. Disagreements get reviewed to update either the agent or the comparison baseline.</li>
-          <li><strong style="color: var(--text)">Staged rollout</strong> - start with 10% of the account base, biased toward medium-risk accounts where errors are recoverable. Monitor escalation rate and CSM override rate for the first 30 days before expanding to full coverage. A sharp spike in either metric is a stop signal.</li>
-          <li><strong style="color: var(--text)">Adversarial testing</strong> - run accounts with deliberately noisy data: missing fields, conflicting signals, stale records. Verify the agent degrades gracefully - it should default to escalate_to_csm = true when confidence is low, not force a classification. Confident wrong answers are worse than honest uncertainty.</li>
-          <li><strong style="color: var(--text)">Regression on updates</strong> - any change to prompt.md or success_playbooks.md triggers a full test.yml run plus a comparison against the last 30 days of live output. Flag any shift in root_cause distribution greater than 15%. That kind of shift usually means the update introduced unintended behavior.</li>
+          <li><strong style="color: var(--text)">Unit tests (test.yml)</strong> - smoke, behavior, escalation, and regression cases. Covers expected inputs, guardrail enforcement, and edge cases like missing KB data or conflicting signals. Already built. Runs on every push via tdx agent test.</li>
+          <li><strong style="color: var(--text)">Shadow mode (2 weeks pre-launch)</strong> - run the agent alongside CSMs for two weeks. It looks at the same accounts but nothing it decides gets acted on yet - just logged. Compare the agent's churn_risk scores against what the CSMs actually think. You want agreement above 80% before going live. Where they disagree, figure out why - sometimes the agent is wrong, sometimes the CSM baseline needs updating.</li>
+          <li><strong style="color: var(--text)">Staged rollout</strong> - start with 10% of accounts, biased toward medium-risk ones where a mistake is recoverable. Watch the escalation rate and how often CSMs override the agent in the first 30 days. Either of those spiking is a reason to pause before expanding.</li>
+          <li><strong style="color: var(--text)">Adversarial testing</strong> - feed it accounts with bad data on purpose. Missing fields, conflicting signals, stale records. The agent should admit uncertainty and escalate, not force a classification. A wrong confident answer causes more damage than an honest handoff to a CSM.</li>
+          <li><strong style="color: var(--text)">Regression on updates</strong> - any change to prompt.md or success_playbooks.md triggers a full test.yml run and a comparison against the last 30 days of live output. If the root_cause distribution shifts by more than 15%, something unintended changed and you need to find it before it ships.</li>
         </ol>
       </div>
     </div>
@@ -571,7 +571,7 @@
           <tr><td>CSM override rate</td><td>CRM: CSM changes agent recommendation</td><td>Above 20%</td><td>Agent scoring is misaligned with CSM judgment - review thresholds</td></tr>
         </table>
         <div class="callout" style="margin-top: 16px;">
-          <strong>CSM override rate is the most important long-term signal.</strong> If CSMs are regularly overriding the agent's recommendations, it means the model and the team are not aligned. That's not always a problem with the agent - sometimes it surfaces a disagreement in what "at-risk" means internally, which is a useful discovery.
+          <strong>CSM override rate is the one to watch long term.</strong> If CSMs are regularly changing what the agent recommends, the agent and the team aren't seeing accounts the same way. That's not always the agent being wrong - sometimes it surfaces a real disagreement inside the team about what "at-risk" actually means. Either way it's worth knowing.
         </div>
       </div>
     </div>
@@ -584,7 +584,7 @@
       <div class="section-icon">FH</div>
       <div class="section-meta">
         <h2>Failure Handling</h2>
-        <p>Five categories of failure, each with a defined response. No silent errors, no guessing.</p>
+        <p>Five things that can go wrong, and what happens in each case.</p>
       </div>
     </div>
 
@@ -592,11 +592,11 @@
       <div class="panel full-width">
         <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Failure Playbook</div>
         <ol class="step-list">
-          <li><strong style="color: var(--text)">KB returns no data</strong> - account_id not found or data pipeline delayed. The agent responds with generic product guidance, sets escalate_to_csm = true, and logs root_cause = data_unavailable. It never fabricates account context to fill the gap.</li>
-          <li><strong style="color: var(--text)">Ambiguous root cause</strong> - multiple signals point in different directions and no clear pattern emerges. The agent surfaces what it found, states that confidence is low, and escalates rather than forcing a classification. A confident wrong answer is worse than an honest handoff.</li>
-          <li><strong style="color: var(--text)">Out-of-scope input</strong> - billing disputes, legal requests, executive escalations. Prompt guardrails catch these and route immediately to the appropriate team. No attempt is made to handle outside the agent's remit.</li>
-          <li><strong style="color: var(--text)">Platform-level outage</strong> - Treasure AI service unavailable. A static fallback response acknowledges the issue and provides CSM contact details. The output write is queued and retried on recovery rather than dropped entirely.</li>
-          <li><strong style="color: var(--text)">Playbook gap</strong> - the account situation does not match any pattern in success_playbooks.md. The agent defaults to escalate_to_csm = true and logs root_cause = needs_review. This feeds the next playbook update cycle - over time, repeated needs_review cases become new playbook entries.</li>
+          <li><strong style="color: var(--text)">KB returns no data</strong> - account_id not found or the data pipeline is delayed. The agent falls back to generic product guidance, flags escalate_to_csm = true, and logs root_cause = data_unavailable. It doesn't try to fill the gap by guessing.</li>
+          <li><strong style="color: var(--text)">Ambiguous root cause</strong> - signals are pointing in multiple directions with no clear answer. The agent tells the CSM what it found, flags low confidence, and hands off. Forcing a classification when the data is unclear causes more problems than admitting it doesn't know.</li>
+          <li><strong style="color: var(--text)">Out-of-scope input</strong> - billing disputes, legal requests, executive escalations. These get caught by prompt guardrails and routed to the right team immediately. The agent doesn't try to handle things it's not built for.</li>
+          <li><strong style="color: var(--text)">Platform outage</strong> - Treasure AI is unavailable. A static response goes out acknowledging the issue with CSM contact details. The output write gets queued and retried when the service comes back, not dropped.</li>
+          <li><strong style="color: var(--text)">Playbook gap</strong> - the account doesn't match any pattern in success_playbooks.md. The agent escalates and logs root_cause = needs_review. Over time those cases get reviewed and turned into new playbook entries. The gaps are actually useful - they show you where the playbook needs to grow.</li>
         </ol>
       </div>
     </div>
@@ -609,7 +609,7 @@
       <div class="section-icon">BI</div>
       <div class="section-meta">
         <h2>Proving Business Impact</h2>
-        <p>The agent needs a baseline to measure against. Without one, any improvement in renewal rates could be seasonal, market-driven, or coincidental.</p>
+        <p>You need a baseline to compare against. Without one, better renewal rates could just be a good quarter - not the agent working.</p>
       </div>
     </div>
 
@@ -617,11 +617,11 @@
       <div class="panel">
         <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Control Group Setup</div>
         <ol class="step-list">
-          <li>At rollout, randomly assign 20% of eligible accounts to a holdout group. These accounts receive standard CSM coverage only - no agent intervention.</li>
-          <li>Match holdout accounts to treatment accounts on health score, ARR tier, and renewal date to reduce selection bias. The groups should look similar going in.</li>
-          <li>Run the split for a full renewal cycle - minimum 90 days - before drawing conclusions. Shorter windows pick up noise, not signal.</li>
-          <li>Primary metric: renewal rate. Secondary metrics: time-to-escalation for high-risk accounts, CSM hours per account, NPS score at renewal.</li>
-          <li>Do not adjust the control group mid-experiment. Once you start, the holdout stays until the window closes.</li>
+          <li>At rollout, randomly assign 20% of eligible accounts to a holdout group. They get normal CSM coverage, no agent. That's your control.</li>
+          <li>Match the holdout accounts to the treatment group on health score, ARR tier, and renewal date. You want both groups to look similar going in, otherwise you're not comparing like for like.</li>
+          <li>Run the split for at least 90 days - a full renewal cycle. Shorter windows are noise, not signal.</li>
+          <li>Primary metric is renewal rate. Secondary: how fast high-risk accounts get escalated to a CSM, CSM time per account, and NPS at renewal.</li>
+          <li>Don't touch the control group once you start. The holdout stays as-is until the window closes.</li>
         </ol>
       </div>
 
@@ -635,7 +635,7 @@
           <tr><td>ARR preserved vs prior period</td><td>Positive vs baseline churn rate</td></tr>
         </table>
         <div class="callout" style="margin-top: 14px;">
-          <strong>A negative result is still useful.</strong> If the holdout group renews at the same rate as the treatment group, the agent is not adding value and the playbooks need rethinking. That outcome points directly to where the intervention logic is wrong - which is a faster path to fixing it than guessing.
+          <strong>A negative result tells you something too.</strong> If the holdout group renews at the same rate as the accounts the agent touched, it's not working and the playbooks need rethinking. That's not a failure - it's exactly the kind of finding that tells you where to fix it, which is faster than guessing.
         </div>
       </div>
     </div>
