@@ -596,7 +596,7 @@
           <li><strong style="color: var(--text)">Ambiguous root cause</strong> - signals are pointing in multiple directions with no clear answer. The agent tells the CSM what it found, flags low confidence, and hands off. Forcing a classification when the data is unclear causes more problems than admitting it doesn't know.</li>
           <li><strong style="color: var(--text)">Out-of-scope input</strong> - billing disputes, legal requests, executive escalations. These get caught by prompt guardrails and routed to the right team immediately. The agent doesn't try to handle things it's not built for.</li>
           <li><strong style="color: var(--text)">Platform outage</strong> - Treasure AI is unavailable. A static response goes out acknowledging the issue with CSM contact details. The output write gets queued and retried when the service comes back, not dropped.</li>
-          <li><strong style="color: var(--text)">Playbook gap</strong> - the account doesn't match any pattern in success_playbooks.md. The agent escalates and logs root_cause = needs_review. Over time those cases get reviewed and turned into new playbook entries. The gaps are actually useful - they show you where the playbook needs to grow.</li>
+          <li><strong style="color: var(--text)">Playbook gap</strong> - the account doesn't match any pattern in success_playbooks.md. The agent escalates and logs root_cause = needs_review. These gaps show you where the playbook needs to grow.</li>
         </ol>
       </div>
     </div>
@@ -635,7 +635,7 @@
           <tr><td>ARR preserved vs prior period</td><td>Positive vs baseline churn rate</td></tr>
         </table>
         <div class="callout" style="margin-top: 14px;">
-          <strong>A negative result tells you something too.</strong> If the holdout group renews at the same rate as the accounts the agent touched, the playbooks need rethinking. That result is just as useful - it points directly to where the intervention logic is wrong, which is faster than guessing.
+          <strong>A negative result tells you something too.</strong> If the holdout group renews at the same rate as the accounts the agent touched, the playbooks need rethinking. This allows you to pinpoint exactly where the intervention logic is wrong.
         </div>
       </div>
     </div>
