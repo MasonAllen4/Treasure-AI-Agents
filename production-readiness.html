@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2B Churn Risk Agent - Production Readiness</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FAF6F8;
+      --surface: #FFFFFF;
+      --surface2: #F3EDF1;
+      --border: #E4D5DC;
+      --accent: #C85A7A;
+      --accent2: #E8799A;
+      --text: #1A0D12;
+      --muted: #6B5862;
+      --green: #2e7d32;
+      --blue: #1d4ed8;
+      --yellow: #b45309;
+      --purple: #7c3aed;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    nav {
+      width: 240px;
+      min-width: 240px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 0 20px 24px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .nav-brand .logo {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .nav-brand h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      padding: 8px 20px 4px 20px;
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    nav a:hover {
+      color: var(--text);
+      background: var(--surface2);
+      border-left-color: var(--border);
+    }
+
+    nav a.active {
+      color: var(--text);
+      background: var(--surface2);
+      border-left-color: var(--accent);
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* MAIN */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 48px 56px;
+      max-width: 960px;
+    }
+
+    /* HERO */
+    .hero {
+      margin-bottom: 56px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(200,90,122,0.1);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 620px;
+      line-height: 1.7;
+    }
+
+    /* SECTION */
+    .prod-section {
+      margin-bottom: 64px;
+      padding-top: 8px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(168,85,247,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #7c3aed;
+      flex-shrink: 0;
+    }
+
+    .section-meta h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .section-meta p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* PANELS */
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(26,13,18,0.05);
+    }
+
+    .panel.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .panel-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+    }
+
+    .panel-label-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .panel h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .panel p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .panel p:last-child { margin-bottom: 0; }
+
+    .panel ul {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .panel ul li {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .panel ul li:last-child { border-bottom: none; }
+
+    .panel ul li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    /* STEP LIST */
+    .step-list {
+      counter-reset: steps;
+      list-style: none;
+    }
+
+    .step-list li {
+      counter-increment: steps;
+      display: flex;
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .step-list li:last-child { border-bottom: none; }
+
+    .step-list li::before {
+      content: counter(steps);
+      background: var(--surface2);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* CODE BLOCK */
+    .code-block {
+      background: #F3EDF1;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #3A2030;
+      margin-top: 10px;
+      overflow-x: auto;
+      line-height: 1.7;
+    }
+
+    .code-block .kw { color: #C85A7A; }
+    .code-block .str { color: #2e7d32; }
+    .code-block .cm { color: #9E8A94; }
+
+    /* TABLE */
+    .opt-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .opt-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .opt-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .opt-table tr:last-child td { border-bottom: none; }
+    .opt-table td:first-child { color: var(--text); font-weight: 500; }
+
+    /* DIVIDER */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0;
+    }
+
+    /* CALLOUT */
+    .callout {
+      background: rgba(200,90,122,0.07);
+      border: 1px solid rgba(200,90,122,0.2);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    .callout strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav>
+  <div class="nav-brand">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <polygon points="12,1 23,8.5 12,23 1,8.5" fill="#C85A7A"/>
+        <polygon points="12,1 23,8.5 12,13" fill="rgba(255,255,255,0.25)"/>
+        <polygon points="12,13 23,8.5 12,23" fill="rgba(0,0,0,0.12)"/>
+        <polygon points="12,1 1,8.5 12,13" fill="rgba(255,255,255,0.1)"/>
+      </svg>
+      <div class="logo">Treasure AI</div>
+    </div>
+    <h2>B2B Churn Risk<br>Production Readiness</h2>
+  </div>
+  <div class="nav-section-label">Sections</div>
+  <a href="#datamodel"><span class="nav-dot" style="background:#7c3aed"></span>Data Model</a>
+  <a href="#identity"><span class="nav-dot" style="background:#7c3aed"></span>Identity and Consent</a>
+  <a href="#testing"><span class="nav-dot" style="background:#7c3aed"></span>Testing Strategy</a>
+  <a href="#monitoring"><span class="nav-dot" style="background:#7c3aed"></span>Monitoring</a>
+  <a href="#failure"><span class="nav-dot" style="background:#7c3aed"></span>Failure Handling</a>
+  <a href="#impact"><span class="nav-dot" style="background:#7c3aed"></span>Business Impact</a>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <section class="hero">
+    <div class="hero-tag">Production Deep Dive</div>
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:12px;">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+        <polygon points="12,1 23,8.5 12,23 1,8.5" fill="#C85A7A"/>
+        <polygon points="12,1 23,8.5 12,13" fill="rgba(255,255,255,0.22)"/>
+        <polygon points="12,13 23,8.5 12,23" fill="rgba(0,0,0,0.1)"/>
+        <polygon points="12,1 1,8.5 12,13" fill="rgba(255,255,255,0.08)"/>
+      </svg>
+      <h1 style="margin-bottom:0;">B2B Churn Risk Agent<br><span style="font-size:20px; font-weight:400; color:var(--muted);">Prototype to Production</span></h1>
+    </div>
+    <p>The agent design covers what the agent does and why. This document covers what it takes to actually ship it - the data model underneath, how identity and consent are handled, the testing layers beyond unit tests, what to monitor after go-live, how failures are handled, and how to prove it moved a number.</p>
+  </section>
+
+  <!-- DATA MODEL -->
+  <hr class="section-divider">
+  <section class="prod-section" id="datamodel">
+    <div class="section-header">
+      <div class="section-icon">DB</div>
+      <div class="section-meta">
+        <h2>Data Model</h2>
+        <p>The three knowledge bases map to underlying Treasure Data tables. Here's what those tables look like and why each field is there.</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>account_profiles</div>
+        <div class="code-block">
+<span class="kw">account_id</span>         STRING<br>
+<span class="kw">account_name</span>       STRING<br>
+<span class="kw">csm_owner</span>          STRING<br>
+<span class="kw">health_score</span>        INTEGER <span class="cm">-- 0-100</span><br>
+<span class="kw">seat_utilization</span>    FLOAT   <span class="cm">-- 0.0-1.0</span><br>
+<span class="kw">feature_adoption</span>    ARRAY   <span class="cm">-- active features</span><br>
+<span class="kw">open_tickets</span>        INTEGER<br>
+<span class="kw">nps_score</span>           INTEGER <span class="cm">-- -100 to 100</span><br>
+<span class="kw">renewal_date</span>        DATE<br>
+<span class="kw">arr</span>                 FLOAT<br>
+<span class="kw">risk_tier</span>           STRING  <span class="cm">-- high/med/low</span><br>
+<span class="kw">last_login</span>          TIMESTAMP<br>
+<span class="kw">consent_b2b</span>         BOOLEAN <span class="cm">-- DPA signed</span>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>product_usage</div>
+        <div class="code-block">
+<span class="kw">account_id</span>          STRING<br>
+<span class="kw">feature_name</span>        STRING<br>
+<span class="kw">usage_count_30d</span>     INTEGER<br>
+<span class="kw">usage_count_90d</span>     INTEGER<br>
+<span class="kw">last_used</span>           TIMESTAMP<br>
+<span class="kw">active_seats</span>        INTEGER<br>
+<span class="kw">licensed_seats</span>      INTEGER<br>
+<span class="kw">integration_status</span>  STRING  <span class="cm">-- active/broken/none</span><br>
+<span class="kw">api_errors_7d</span>       INTEGER<br>
+<span class="kw">support_tickets_90d</span> INTEGER
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>agent_output (write-back)</div>
+        <div class="code-block">
+<span class="kw">account_id</span>          STRING<br>
+<span class="kw">conversation_id</span>     STRING<br>
+<span class="kw">timestamp</span>           TIMESTAMP<br>
+<span class="kw">churn_risk</span>          STRING<br>
+<span class="kw">root_cause</span>          STRING<br>
+<span class="kw">intervention_taken</span>  STRING<br>
+<span class="kw">escalate_to_csm</span>     BOOLEAN<br>
+<span class="kw">renewal_at_risk</span>     BOOLEAN<br>
+<span class="kw">confidence_score</span>    FLOAT<br>
+<span class="kw">agent_version</span>       STRING  <span class="cm">-- for regression tracking</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>account_id is the identity spine.</strong> Every table joins on it. The agent_output table is what gets written at the end of each conversation - this is the feedback loop that populates CDP segments, renewal risk dashboards, and CSM pre-briefing workflows. The agent_version field matters for regression: if a prompt update shifts output distributions, you can isolate when it happened.
+    </div>
+  </section>
+
+  <!-- IDENTITY AND CONSENT -->
+  <hr class="section-divider">
+  <section class="prod-section" id="identity">
+    <div class="section-header">
+      <div class="section-icon">ID</div>
+      <div class="section-meta">
+        <h2>Identity and Consent</h2>
+        <p>B2B identity is simpler than B2C - you're working with account-level records, not individual consumer profiles. But consent still matters.</p>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Identity Resolution</div>
+        <ol class="step-list">
+          <li>Account identity is resolved via account_id, passed as a variable at conversation start. No fuzzy matching needed - the CRM is the authoritative source.</li>
+          <li>Individual user identity (the CSM or account contact initiating the session) is handled at the platform level. Treasure AI authenticates the session before the agent runs. The agent never processes individual PII directly.</li>
+          <li>Returning account recognition uses prior conversation history from agent_output, not personal identifiers. The agent sees account context, not who is typing.</li>
+        </ol>
+      </div>
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Consent Handling</div>
+        <ol class="step-list">
+          <li>The consent_b2b field in account_profiles flags whether a Data Processing Agreement is signed. If false, the agent limits itself to generic product guidance - no account-specific data is surfaced.</li>
+          <li>All data written to agent_output is tagged with account_id only, not user email or name. Compliant with GDPR Article 25 data minimisation.</li>
+          <li>In EMEA, employee data (usage patterns, login behavior) falls under GDPR. The DPA covers this at contract level. No additional per-user consent flow is needed for B2B account health use cases.</li>
+          <li>Retention policy on agent_output: 24 months, aligned with standard B2B contract cycles. After that, records are anonymised rather than deleted so trend data is preserved.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTING STRATEGY -->
+  <hr class="section-divider">
+  <section class="prod-section" id="testing">
+    <div class="section-header">
+      <div class="section-icon">TS</div>
+      <div class="section-meta">
+        <h2>Testing Strategy</h2>
+        <p>test.yml handles unit-level behavior. Getting to production requires three more layers on top of that.</p>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel full-width">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Four Testing Layers</div>
+        <ol class="step-list">
+          <li><strong style="color: var(--text)">Unit tests (test.yml)</strong> - smoke, behavior, escalation, and regression cases. Covers expected inputs, guardrail enforcement, and edge cases like missing KB data or ambiguous signals. Already in place. Runs on every push via tdx agent test.</li>
+          <li><strong style="color: var(--text)">Shadow mode (2 weeks pre-launch)</strong> - deploy the agent alongside human CSMs for two weeks. It processes the same accounts but output is logged only, not acted on. Compare agent churn_risk scores against CSM assessments. Target: agreement rate above 80% before going live. Disagreements get reviewed to update either the agent or the comparison baseline.</li>
+          <li><strong style="color: var(--text)">Staged rollout</strong> - start with 10% of the account base, biased toward medium-risk accounts where errors are recoverable. Monitor escalation rate and CSM override rate for the first 30 days before expanding to full coverage. A sharp spike in either metric is a stop signal.</li>
+          <li><strong style="color: var(--text)">Adversarial testing</strong> - run accounts with deliberately noisy data: missing fields, conflicting signals, stale records. Verify the agent degrades gracefully - it should default to escalate_to_csm = true when confidence is low, not force a classification. Confident wrong answers are worse than honest uncertainty.</li>
+          <li><strong style="color: var(--text)">Regression on updates</strong> - any change to prompt.md or success_playbooks.md triggers a full test.yml run plus a comparison against the last 30 days of live output. Flag any shift in root_cause distribution greater than 15%. That kind of shift usually means the update introduced unintended behavior.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- MONITORING -->
+  <hr class="section-divider">
+  <section class="prod-section" id="monitoring">
+    <div class="section-header">
+      <div class="section-icon">MO</div>
+      <div class="section-meta">
+        <h2>Monitoring</h2>
+        <p>What to watch after go-live, and what triggers action.</p>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel full-width">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Signal Dashboard</div>
+        <table class="opt-table">
+          <tr><th>Signal</th><th>Source</th><th>Alert threshold</th><th>What it means</th></tr>
+          <tr><td>Escalation rate</td><td>agent_output: escalate_to_csm</td><td>Above 40%</td><td>Agent is under-confident - prompt or KB may need refinement</td></tr>
+          <tr><td>Root cause distribution shift</td><td>agent_output: root_cause over time</td><td>Any single cause above 50%</td><td>Possible upstream data quality issue or model drift</td></tr>
+          <tr><td>KB query failure rate</td><td>Tool call logs</td><td>Above 2%</td><td>Data pipeline issue - agent is running without full context</td></tr>
+          <tr><td>Output write failure rate</td><td>agent_output ingestion logs</td><td>Any failure</td><td>Broken feedback loop - CDP segments will go stale</td></tr>
+          <tr><td>Renewal at risk rate</td><td>agent_output: renewal_at_risk = true</td><td>Weekly report</td><td>Input to CS leadership pipeline risk review</td></tr>
+          <tr><td>CSM override rate</td><td>CRM: CSM changes agent recommendation</td><td>Above 20%</td><td>Agent scoring is misaligned with CSM judgment - review thresholds</td></tr>
+        </table>
+        <div class="callout" style="margin-top: 16px;">
+          <strong>CSM override rate is the most important long-term signal.</strong> If CSMs are regularly overriding the agent's recommendations, it means the model and the team are not aligned. That's not always a problem with the agent - sometimes it surfaces a disagreement in what "at-risk" means internally, which is a useful discovery.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAILURE HANDLING -->
+  <hr class="section-divider">
+  <section class="prod-section" id="failure">
+    <div class="section-header">
+      <div class="section-icon">FH</div>
+      <div class="section-meta">
+        <h2>Failure Handling</h2>
+        <p>Five categories of failure, each with a defined response. No silent errors, no guessing.</p>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel full-width">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Failure Playbook</div>
+        <ol class="step-list">
+          <li><strong style="color: var(--text)">KB returns no data</strong> - account_id not found or data pipeline delayed. The agent responds with generic product guidance, sets escalate_to_csm = true, and logs root_cause = data_unavailable. It never fabricates account context to fill the gap.</li>
+          <li><strong style="color: var(--text)">Ambiguous root cause</strong> - multiple signals point in different directions and no clear pattern emerges. The agent surfaces what it found, states that confidence is low, and escalates rather than forcing a classification. A confident wrong answer is worse than an honest handoff.</li>
+          <li><strong style="color: var(--text)">Out-of-scope input</strong> - billing disputes, legal requests, executive escalations. Prompt guardrails catch these and route immediately to the appropriate team. No attempt is made to handle outside the agent's remit.</li>
+          <li><strong style="color: var(--text)">Platform-level outage</strong> - Treasure AI service unavailable. A static fallback response acknowledges the issue and provides CSM contact details. The output write is queued and retried on recovery rather than dropped entirely.</li>
+          <li><strong style="color: var(--text)">Playbook gap</strong> - the account situation does not match any pattern in success_playbooks.md. The agent defaults to escalate_to_csm = true and logs root_cause = needs_review. This feeds the next playbook update cycle - over time, repeated needs_review cases become new playbook entries.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUSINESS IMPACT -->
+  <hr class="section-divider">
+  <section class="prod-section" id="impact">
+    <div class="section-header">
+      <div class="section-icon">BI</div>
+      <div class="section-meta">
+        <h2>Proving Business Impact</h2>
+        <p>The agent needs a baseline to measure against. Without one, any improvement in renewal rates could be seasonal, market-driven, or coincidental.</p>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>Control Group Setup</div>
+        <ol class="step-list">
+          <li>At rollout, randomly assign 20% of eligible accounts to a holdout group. These accounts receive standard CSM coverage only - no agent intervention.</li>
+          <li>Match holdout accounts to treatment accounts on health score, ARR tier, and renewal date to reduce selection bias. The groups should look similar going in.</li>
+          <li>Run the split for a full renewal cycle - minimum 90 days - before drawing conclusions. Shorter windows pick up noise, not signal.</li>
+          <li>Primary metric: renewal rate. Secondary metrics: time-to-escalation for high-risk accounts, CSM hours per account, NPS score at renewal.</li>
+          <li>Do not adjust the control group mid-experiment. Once you start, the holdout stays until the window closes.</li>
+        </ol>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label"><span class="panel-label-dot" style="background:#7c3aed"></span>What Success Looks Like</div>
+        <table class="opt-table">
+          <tr><th>Metric</th><th>Target</th></tr>
+          <tr><td>Renewal rate: treatment vs control</td><td>+5 percentage points</td></tr>
+          <tr><td>High-risk account escalation speed</td><td>-3 days average time to CSM</td></tr>
+          <tr><td>CSM hours per at-risk account</td><td>-20% via better pre-briefing</td></tr>
+          <tr><td>ARR preserved vs prior period</td><td>Positive vs baseline churn rate</td></tr>
+        </table>
+        <div class="callout" style="margin-top: 14px;">
+          <strong>A negative result is still useful.</strong> If the holdout group renews at the same rate as the treatment group, the agent is not adding value and the playbooks need rethinking. That outcome points directly to where the intervention logic is wrong - which is a faster path to fixing it than guessing.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
