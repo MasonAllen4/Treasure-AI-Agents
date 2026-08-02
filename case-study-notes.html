@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case Study Study Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FAF6F8;
+      --surface: #FFFFFF;
+      --surface2: #F3EDF1;
+      --border: #E4D5DC;
+      --accent: #C85A7A;
+      --text: #1A0D12;
+      --muted: #6B5862;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      padding: 48px 64px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .brand .logo {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 48px;
+    }
+
+    .section {
+      margin-bottom: 48px;
+    }
+
+    .section-number {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .plain-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(26,13,18,0.04);
+    }
+
+    .plain-box p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .plain-box p:last-child { margin-bottom: 0; }
+
+    .plain-box strong {
+      color: var(--text);
+    }
+
+    .step-list {
+      list-style: none;
+      counter-reset: steps;
+    }
+
+    .step-list li {
+      counter-increment: steps;
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .step-list li:last-child { border-bottom: none; }
+
+    .step-list li::before {
+      content: counter(steps);
+      background: var(--surface2);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .step-list li strong {
+      color: var(--text);
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      box-shadow: 0 1px 4px rgba(26,13,18,0.04);
+    }
+
+    .task-card .task-num {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .task-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .task-card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .term-list {
+      list-style: none;
+    }
+
+    .term-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .term-list li:last-child { border-bottom: none; }
+
+    .term {
+      font-weight: 700;
+      color: var(--text);
+      min-width: 140px;
+    }
+
+    .definition {
+      color: var(--muted);
+    }
+
+    .callout {
+      background: rgba(200,90,122,0.07);
+      border: 1px solid rgba(200,90,122,0.2);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    .callout strong { color: var(--accent); }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    .q-list {
+      list-style: none;
+    }
+
+    .q-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .q-list li:last-child { border-bottom: none; }
+
+    .q-list li::before {
+      content: "?";
+      background: var(--surface2);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <polygon points="12,1 23,8.5 12,23 1,8.5" fill="#C85A7A"/>
+      <polygon points="12,1 23,8.5 12,13" fill="rgba(255,255,255,0.25)"/>
+      <polygon points="12,13 23,8.5 12,23" fill="rgba(0,0,0,0.12)"/>
+    </svg>
+    <div class="logo">Treasure AI - Case Study Prep</div>
+  </div>
+
+  <h1>Case Study Study Guide</h1>
+  <p class="subtitle">AI-Powered Customer Engagement - broken down step by step for notes</p>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="section-number">Section 1</div>
+    <h2>What Is This Case Study Actually Asking?</h2>
+    <div class="plain-box">
+      <p>A big retailer has messy customer data across 7 different systems. They want to use AI to improve how they keep customers coming back. Your job is to recommend how Treasure AI helps them do that.</p>
+      <p>You get <strong>20-25 minutes to present</strong> your recommendation, then <strong>25-30 minutes of questions</strong> from the panel.</p>
+      <p>There is no single right answer. They want to see <strong>how you think</strong>, not whether you memorized the perfect solution.</p>
+    </div>
+    <div class="callout">
+      <strong>The most important thing Ben said:</strong> Start with the business outcome, not the technology. Don't open with "I'd build an agent that..." - open with "The retailer's problem is..."
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="section-number">Section 2</div>
+    <h2>The Client's Situation - Simple Version</h2>
+    <div class="plain-box">
+      <p><strong>Who is the client?</strong> A global specialty retailer. Think something like a large outdoor gear brand or home goods chain.</p>
+      <p><strong>What data do they have?</strong> Customer data across 7 places:</p>
+    </div>
+    <ul class="step-list">
+      <li><strong>Ecommerce transactions</strong> - what people bought online</li>
+      <li><strong>Loyalty profiles</strong> - points, tier, membership info</li>
+      <li><strong>Customer service interactions</strong> - calls, chats, complaints</li>
+      <li><strong>Email and mobile engagement</strong> - opens, clicks, responses</li>
+      <li><strong>Product browsing behavior</strong> - what they looked at but didn't buy</li>
+      <li><strong>Store purchases</strong> - what they bought in physical stores</li>
+      <li><strong>Product catalog and inventory</strong> - what's available and where</li>
+    </ul>
+    <div class="plain-box" style="margin-top: 16px;">
+      <p><strong>The problem:</strong> They have 10 million customer profiles but the data is a mess. Some customers have duplicate records. No one can see a customer's full history in one place.</p>
+      <p><strong>What the Head of Customer Experience wants:</strong> Better decisions, faster. An AI solution live in 12-16 weeks that can grow into more use cases later.</p>
+    </div>
+    <div class="callout">
+      <strong>Write this down:</strong> The data problem comes before the AI problem. You can't build a useful agent on top of duplicate, disconnected data. Cleaning and connecting the data is step one - that's what the CDP does.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <div class="section-number">Section 3</div>
+    <h2>Key Terms You Need to Know</h2>
+    <ul class="term-list">
+      <li>
+        <span class="term">CDP</span>
+        <span class="definition">Customer Data Platform. A system that pulls all the customer data from different places into one unified profile per customer. Think of it as the single source of truth for who a customer is and what they've done.</span>
+      </li>
+      <li>
+        <span class="term">MVP</span>
+        <span class="definition">Minimum Viable Product. The smallest, simplest version of something that still works and delivers value. You're not building everything - just the first useful thing.</span>
+      </li>
+      <li>
+        <span class="term">Identity Resolution</span>
+        <span class="definition">The process of figuring out that two records are the same person. If someone bought online with one email and in-store with another, identity resolution connects those into one profile.</span>
+      </li>
+      <li>
+        <span class="term">Churn</span>
+        <span class="definition">When a customer stops buying from you or cancels. Churn risk means a customer shows signs they might leave soon.</span>
+      </li>
+      <li>
+        <span class="term">Next Best Action</span>
+        <span class="definition">A recommendation for what to do with a specific customer right now. Example: "Send this customer a loyalty reminder" or "Flag this customer for a CSR call."</span>
+      </li>
+      <li>
+        <span class="term">Activation</span>
+        <span class="definition">Taking the insight from the CDP and actually doing something with it - sending an email, triggering a journey, updating a segment.</span>
+      </li>
+      <li>
+        <span class="term">Guardrails</span>
+        <span class="definition">Rules built into an AI agent to prevent it from doing something wrong. Example: never offer a discount to a customer who wasn't asking for one.</span>
+      </li>
+      <li>
+        <span class="term">Deterministic rule</span>
+        <span class="definition">A hard rule that always produces the same result. Example: "If a customer hasn't purchased in 90 days, flag them as at-risk." No AI needed - it's just a rule.</span>
+      </li>
+      <li>
+        <span class="term">Baseline</span>
+        <span class="definition">The starting point you measure against. If retention is at 60% before the agent launches, that's your baseline. After launch you compare against it to see if the agent helped.</span>
+      </li>
+      <li>
+        <span class="term">Consent</span>
+        <span class="definition">Permission from the customer to use their data. Without this, especially in EMEA, you can't legally use personal data to power AI decisions.</span>
+      </li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 4 -->
+  <div class="section">
+    <div class="section-number">Section 4</div>
+    <h2>The 7 Things You Need to Cover</h2>
+    <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">The case study lists 7 sections you need to address. Here's each one in plain English.</p>
+
+    <div class="task-grid">
+      <div class="task-card">
+        <div class="task-num">Task 1</div>
+        <h3>Clarify the Problem</h3>
+        <p>Before you recommend anything, what questions would you ask the client? What are you assuming because they didn't tell you? This shows you don't just jump to solutions.</p>
+      </div>
+      <div class="task-card">
+        <div class="task-num">Task 2</div>
+        <h3>Describe the Target Experience</h3>
+        <p>Walk through what actually happens. Who uses it? What kicks it off? What does the AI do? What happens after? Where does a human step in?</p>
+      </div>
+      <div class="task-card">
+        <div class="task-num">Task 3</div>
+        <h3>Data and CDP Requirements</h3>
+        <p>What data does the solution need? How does the messy data problem affect things? What needs to be cleaned or connected first before the AI can work?</p>
+      </div>
+      <div class="task-card">
+        <div class="task-num">Task 4</div>
+        <h3>Design the AI Workflow</h3>
+        <p>Show the steps from start to finish. Where does the AI make a decision? Where is it just a rule? What are the guardrails? When does a human get involved?</p>
+      </div>
+      <div class="task-card">
+        <div class="task-num">Task 5</div>
+        <h3>Measurement and Success</h3>
+        <p>How do you know if it worked? What numbers do you track? How do you set a baseline before launch so you can compare after?</p>
+      </div>
+      <div class="task-card">
+        <div class="task-num">Task 6</div>
+        <h3>12-16 Week Roadmap</h3>
+        <p>Break the work into phases. What happens in week 1? Week 8? Week 16? What does the client need to provide? Who does what?</p>
+      </div>
+    </div>
+    <div class="task-card" style="margin-bottom: 0;">
+      <div class="task-num">Task 7</div>
+      <h3>Risks and Open Decisions</h3>
+      <p>What could go wrong? Messy data, consent issues, the AI making bad recommendations, the team not adopting it. What's your plan for each risk?</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 5 -->
+  <div class="section">
+    <div class="section-number">Section 5</div>
+    <h2>How to Pick Your MVP Use Case</h2>
+    <div class="plain-box">
+      <p>You have to pick <strong>one</strong> use case to focus on. The case study gives you examples. You don't need to cover all of them. Pick one and go deep.</p>
+    </div>
+    <ul class="step-list">
+      <li><strong>Churn-risk identification and retention journeys</strong> - Find customers likely to leave and trigger outreach before they do. Strong choice because it has a clear business metric (retention rate) and connects directly to revenue.</li>
+      <li><strong>Customer service agent assist</strong> - Give customer service reps a summary of who they're talking to before they pick up the phone. Strong choice because it solves the "limited visibility" problem the client described.</li>
+      <li><strong>AI-assisted next-best-action recommendations</strong> - For each customer, recommend what the business should do next. Broad but powerful.</li>
+      <li><strong>Personalized product or offer recommendations</strong> - Surface the right product or promotion for each customer based on their history.</li>
+      <li><strong>AI-generated customer engagement recommendations</strong> - Similar to next-best-action but focused on communication timing and channel.</li>
+    </ul>
+    <div class="callout">
+      <strong>Recommendation:</strong> Churn-risk identification is the strongest MVP choice here. The client specifically said they want to "identify customers who may be at risk of disengaging." It maps directly to a business goal, has a measurable outcome (retention rate), and the data to support it - purchase history, browsing, loyalty activity - is already in their systems.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 6 -->
+  <div class="section">
+    <div class="section-number">Section 6</div>
+    <h2>The Data Problem - What to Say</h2>
+    <div class="plain-box">
+      <p>The case study specifically mentions duplicate profiles and disconnected data. This is intentional - they want to see if you understand that <strong>data quality comes before AI</strong>.</p>
+    </div>
+    <ul class="step-list">
+      <li><strong>Step 1 is identity resolution.</strong> Before you can build any agent, you need one profile per customer. If John Smith has a loyalty account and an ecommerce account that aren't connected, the agent is working with half the picture.</li>
+      <li><strong>The CDP handles this.</strong> Treasure Data's CDP is what ingests all 7 data sources and resolves them into unified profiles. The agents sit on top of that unified data.</li>
+      <li><strong>Data quality affects AI confidence.</strong> If a customer's purchase history is incomplete, the churn signal is weaker. You'd want to validate data completeness before trusting the agent's outputs.</li>
+      <li><strong>Consent has to be checked first.</strong> Especially for EMEA customers. Before the agent can use behavioral data to make decisions, consent needs to be verified at the profile level.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 7 -->
+  <div class="section">
+    <div class="section-number">Section 7</div>
+    <h2>AI vs Rules - Know the Difference</h2>
+    <div class="plain-box">
+      <p>The case study asks you to separate AI decisions from rules-based decisions. This trips people up. Here's the simple version:</p>
+    </div>
+    <ul class="step-list">
+      <li><strong>Use a rule when the answer is always the same.</strong> "If a customer hasn't bought in 90 days, flag them." That doesn't need AI - it's just a condition. Rules are faster, cheaper, and easier to audit.</li>
+      <li><strong>Use AI when the answer depends on context.</strong> "Given this customer's full history, what's the best message to send them right now?" That requires weighing multiple signals - AI is the right tool.</li>
+      <li><strong>Example from the churn use case:</strong> The rule detects the at-risk signal (no purchase in 90 days). The AI decides what to do about it (personalized message, offer, CSR call, or do nothing).</li>
+      <li><strong>Always have a human in the loop for high-stakes decisions.</strong> If the AI recommends escalating a customer to a senior CSR, a human should review before the call happens.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 8 -->
+  <div class="section">
+    <div class="section-number">Section 8</div>
+    <h2>The 12-16 Week Roadmap - Simple Version</h2>
+    <div class="plain-box">
+      <p>They want to see realistic phases. Not everything at once. Here's a simple way to think about it:</p>
+    </div>
+    <ul class="step-list">
+      <li><strong>Weeks 1-3: Discovery</strong> - Meet with stakeholders. Understand the data. Map out what exists where. Confirm the MVP use case. Identify consent gaps. Define what success looks like.</li>
+      <li><strong>Weeks 4-6: Data and CDP Setup</strong> - Connect the 7 data sources. Run identity resolution. Build the unified customer profile. Validate data quality. Check consent coverage.</li>
+      <li><strong>Weeks 7-10: Build and Configure</strong> - Build the churn risk agent. Configure knowledge bases. Write the prompt and guardrails. Set up the output schema. Build the segment that triggers the journey.</li>
+      <li><strong>Weeks 11-13: Test and Enable</strong> - Run shadow mode alongside existing processes. Fix issues. Train the team. Get client sign-off on outputs before going live.</li>
+      <li><strong>Weeks 14-16: Launch and Optimize</strong> - Go live with staged rollout. Monitor metrics. Fix problems. Document what worked for the next use case.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 9 -->
+  <div class="section">
+    <div class="section-number">Section 9</div>
+    <h2>Likely Questions from the Panel</h2>
+    <ul class="q-list">
+      <li>Why did you choose churn risk over the other use cases?</li>
+      <li>How would you handle the duplicate profile problem before the agent goes live?</li>
+      <li>Where does the AI make a decision versus where is it just a rule?</li>
+      <li>What happens if the AI makes a wrong recommendation?</li>
+      <li>How do you measure whether the MVP worked?</li>
+      <li>What's the biggest risk in this engagement and how do you manage it?</li>
+      <li>How does this MVP set up the next use case?</li>
+      <li>What do you need from the client to deliver in 16 weeks?</li>
+      <li>How do you handle consent for customers in EMEA?</li>
+      <li>What would make you slow down or stop the rollout?</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 10 -->
+  <div class="section">
+    <div class="section-number">Section 10</div>
+    <h2>What to Write Down First</h2>
+    <div class="plain-box">
+      <p>When you sit down to take notes, start with these four things. Everything else builds from them.</p>
+    </div>
+    <ul class="step-list">
+      <li><strong>The client's #1 problem in one sentence.</strong> "A retailer with 10 million customers can't see their full history and is losing customers they could have kept."</li>
+      <li><strong>Your chosen MVP in one sentence.</strong> "Build a churn risk agent that identifies at-risk customers and triggers a personalized retention journey."</li>
+      <li><strong>Why data comes first.</strong> "The agent only works if the profiles are unified and clean - identity resolution and data quality validation happen before anything else."</li>
+      <li><strong>How you prove it worked.</strong> "Measure retention rate in a treatment group vs a control group over a full purchase cycle."</li>
+    </ul>
+    <div class="callout">
+      <strong>Remember:</strong> They said there is no single correct answer. They are watching how you think through the problem, how you explain trade-offs, and whether you understand the difference between what the technology can do and what the business actually needs.
+    </div>
+  </div>
+
+</body>
+</html>
